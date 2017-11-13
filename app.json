@@ -1,0 +1,45 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/logs/logs",
+    "page/component/index",
+    "page/component/component-pages/mine/mine",
+    "page/component/component-pages/list/list",
+    "page/component/component-pages/userinfo/userinfo",
+    "page/component/component-pages/sendCode/sendCode",
+    "page/component/component-pages/myInfo/myInfo",
+    "page/component/component-pages/cList/cList"
+
+  ],
+  "window": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "橙子计划",
+    "navigationBarBackgroundColor": "#5BCCFC",
+    "backgroundColor": "#F6F8F8",
+    "enablePullDownRefresh": true
+  },
+  "tabBar": {
+    "color": "#bdbdbd",
+    "selectedColor": "#53b6e0",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [{
+      "pagePath": "pages/index/index",
+      "iconPath": "image/book.png",
+      "selectedIconPath": "image/pen-select.png",
+      "text": "首页"
+    }, {
+      "pagePath": "pages/logs/logs",
+      "iconPath": "image/user.png",
+      "selectedIconPath": "image/user-select.png",
+      "text": "我的"
+    }]
+  },
+  "networkTimeout": {
+    "request": 10000,
+    "connectSocket": 10000,
+    "uploadFile": 10000,
+    "downloadFile": 10000
+  },
+  "debug": true
+}

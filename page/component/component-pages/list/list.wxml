@@ -1,0 +1,55 @@
+<view class="list">
+    <block wx:if="{{canshow}}">
+        <block wx:if="{{dataList != ''}}">
+            <view class="list-main">
+                <view class="widgets__item">
+                    <block wx:for="{{dataList}}" wx:key="*this">
+                        <view class="block-re">
+                        <!-- <view class="date"><text>昨天</text></view> -->
+                            <navigator url="../userinfo/userinfo?uid={{item.id}}" class="widget">
+                                <view class="list-line">
+                                    <image src="{{item.imgUrl}}" class="user-img"></image>
+                                    <view class="user-info">
+                                        <view class="username"><text>{{item.nickName}}</text></view>
+                                        <view class="com-name"><text>{{item.company}}</text></view>
+                                    </view>
+                                    <view class="widget__line" wx:if="{{dataListNum != (index+1)}}"></view>
+                                </view>
+                            </navigator>
+                            <view class="line-right">
+                                <block wx:if="{{pageType == 'zuji' || pageType == 'uzuji'}}">
+                                    <button size="mini" type="primary" hover-class="other-button-hover" data-id="{{item.id}}" data-value="{{collectList[index]}}" data-key="{{index}}" wx:if="{{collectList[index] == false}}" bindtap="addLike">收藏Ta</button>
+                                    <text wx:elif="{{collectList[index] == true}}">已收藏</text>
+                                    <text wx:elif="{{item.phone == ''}}">暂无名片</text>
+                                </block>
+                                <block wx:elif="{{pageType == 'like' || pageType == 'ulike'}}">
+                                    <button size="mini" type="primary" hover-class="other-button-hover" data-id="{{item.id}}" data-value="{{collectList[index]}}" wx:if="{{collectList[index] == false}}" bindtap="addLike">收藏Ta</button>
+                                    <text wx:else>已收藏</text>
+                                </block>
+                                <block wx:elif="{{pageType == 'card'}}">
+                                    <view data-value="{{item.phone}}" bindtap="makeCall">
+                                        <image src="/image/call_icon.png" class="call-icon"></image>
+                                    </view>
+                                </block>
+                            </view>
+                        </view>
+                    </block>
+                </view>
+                <!-- 没有更多 -->
+                <view class="no-more">
+                    <text class="no-more-txt">没有更多</text>
+                </view>
+            </view>
+        </block>
+        <block wx:else>
+            <view class="noDataTop">
+                <view class="noCardImg">
+                    <image src="/image/noData.png" class="noCard"></image>
+                </view>
+                <view class="noCardTxt">
+                    <text>还没{{pageType == 'zuji' ? '看过别人' : (pageType == 'card' ? '收藏过别人' : (pageType == 'uzuji' ? '被谁看过' : '被谁收藏过'))}}</text>
+                </view>
+            </view>
+        </block>
+    </block>
+</view>

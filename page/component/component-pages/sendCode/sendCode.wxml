@@ -1,0 +1,23 @@
+<view class="page">
+    <view class="page-main">
+        <view class="w-card-info-box">
+            <view class="w-user-com">
+                <view class="w-com-txt"><text>手机号</text></view>
+                <view class="com-input">
+                    <input type="text" placeholder="请输入手机号" data-name="tel" bindinput="bindInput" />
+                </view>
+                <view class="checkCode" bindtap="getCode">{{second}}</view>
+                <view class="widget__line_top"></view>
+            </view>
+            <view class="w-user-com">
+                <view class="w-com-txt"><text>验证码</text></view>
+                <view class="com-input">
+                    <input type="text" placeholder="请输入验证码" data-name="code" bindinput="bindInput" />
+                </view>
+            </view>
+        </view>
+        <view>
+            <button type="primary" class="setBtn creatBtn" bindtap="comChange">确认</button>
+        </view>
+    </view>
+</view>

@@ -1,0 +1,85 @@
+<view class="index">
+    <block wx:if="{{canshow}}">
+    <!-- 创建名片 -->
+    <block wx:if="{{userMobile == ''}}">
+        <view class="card-creat-block">
+            <view class="noCardImg">
+                <image src="/image/noCard.png" class="noCard"></image>
+            </view>
+            <view class="noCardTxt">
+                <text>你还没建立自己的名片，点击创建一张</text>
+            </view>
+            <navigator url="/page/component/component-pages/myInfo/myInfo" class="widget">
+                <view class="button-wrapper">
+                    <button class="setBtn" type="primary" bindtap="editCard">去创建</button>
+                </view>
+            </navigator>
+        </view>
+    </block>
+    <!-- 已有名片 -->
+    <block wx:else>
+        <!-- 用户信息 -->
+        <view class="card-info-block">
+            <view class="card-info-box">
+                <view class="card-user">
+                    <text class="username">{{userInfo.nickName == undefined ? '暂无' : userInfo.nickName}}</text>
+                    <text class="user-job">{{userInfo.job == undefined ? '暂无' : userInfo.job}}</text>
+                </view>
+                <view class="card-info-line n-mar">
+                    <text class="line-title">电话</text>
+                    <text class="info-cont telTxt" data-value="{{userInfo.phone}}" bindtap="makeCall">{{userInfo.phone == undefined ? '暂无' : userInfo.phone}}</text>
+                    <text wx:if="{{userInfo.phoneStatus == 0}}" class="checkTxt" bindtap="checkTel">去验证</text>
+                    <!-- <text wx:else>去验证</text> -->
+                </view>
+                <view class="card-info-line">
+                    <text class="line-title">公司</text>
+                    <text class="info-cont">{{userInfo.company == undefined ? '暂无' : userInfo.company}}</text>
+                </view>
+                <view class="card-info-line">
+                    <text class="line-title">邮箱</text>
+                    <text class="info-cont">{{userInfo.mail == undefined ? '暂无' : userInfo.mail}}</text>
+                </view>
+                <!-- 用户头像 -->
+                <wx-image class="user-info-img" src="{{userInfo.imgUrl}}" background-size="cover" />
+            </view>
+        </view>
+        <!-- 人气收藏 -->
+        <view class="card-like-block">
+            <view class="card-like-box">
+                <view class="flex-item">
+                    <navigator url="/page/component/component-pages/list/list?type=uzuji" class="widget">
+                        <image src="/image/index-icon-hot.png" class="like-icon"></image>
+                        <text>人气：{{userInfo.accessMeNum}}</text>
+                    </navigator>
+                </view>
+                <view class="flex-item">
+                    <navigator url="/page/component/component-pages/list/list?type=ulike" class="widget">
+                        <image src="/image/index-icon-like.png" class="like-icon"></image>
+                        <text>收藏：{{userInfo.collectMeNum}}</text>
+                    </navigator>
+                </view>
+            </view>
+        </view>
+        <!-- 更多 -->
+        <view class="info-more-block">
+            <view class="info-more-box">
+                <text>简介</text>
+                <text class="info-desc" placeholder="这个家伙很懒，什么都没留下…">{{(userInfo.remark == undefined || userInfo.remark == '') ? '这个家伙很懒，什么都没留下…' : userInfo.remark}}</text>
+            </view>
+        </view>
+        <!-- 按钮 -->
+        <view class="button-wrapper">
+            <button class="setBtn" type="primary" bindtap="useCard">递名片</button>
+        </view>
+        <view class="useTxt">
+            <view><text>点击右上角，分享我的名片</text></view>
+            <view class="mt5"><text>再次使用：发现-小程序-搜索“名片通讯录”</text></view>
+        </view>
+    </block>
+    </block>
+    <view class="share-block" wx:if="{{showShare}}" bindtap="hideCard">
+        <view class="shareImg">
+            <image src="/image/share.png" class="share-icon"></image>
+        </view>
+    </view>
+</view>

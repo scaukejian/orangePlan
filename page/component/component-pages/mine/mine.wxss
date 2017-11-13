@@ -1,0 +1,83 @@
+.page {
+    padding-top: 15px;
+}
+.mine-info {
+    background-color: #fff;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.arrow{
+    width: 8px;
+    height: 16px;
+}
+.user-info-img {
+    width: 50px;
+    height: 50px;
+    border: 1px solid #bdbdbd;
+    border-radius: 6px;
+}
+.username {
+    flex: 1;
+    margin-left: 10px;
+}
+.tel {
+    font-size: 14px;
+}
+.tel-check {
+    font-size: 12px;
+    color:#fff;
+    background-color: #bdbdbd;
+    border-radius: 6px;
+    padding: 0 5px;
+    margin-left: 5px;
+}
+.pass {
+    background-color: rgba(0,0,0,0);
+    color: #53b6e0;
+    border: 1rpx #53b6e0 solid;
+}
+.edit-info {
+    color: #bdbdbd;
+    margin-right: 5px;
+}
+
+/* 操作列表 */
+.widgets__item{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #FFFFFF;
+    overflow: hidden;
+    border-radius: 2px;
+    cursor: pointer;
+}
+.list_icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+.widget{
+    position: relative;
+    padding-top: 13px;
+    padding-bottom: 13px;
+    padding-left: 20px;
+    padding-right: 20px;
+    display: flex;
+}
+.widget__arrow{
+    position: absolute;
+    top: 14px;
+    right: 22px;
+    width: 8px;
+    height: 16px;
+}
+.widget__line{
+    content: " ";
+    position: absolute;
+    left: 20px;
+    bottom: 0;
+    height: 1rpx;
+    background-color: #DFDFDF;
+    width: 100%;
+}

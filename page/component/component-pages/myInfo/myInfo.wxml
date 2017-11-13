@@ -1,0 +1,56 @@
+<view class="page">
+    <view class="card-creat-block">
+        <view class="w-card-info-box">
+            <view class="w-user-info">
+                <!-- 用户头像 -->
+                <view bindtap="changeUimg"><wx-image class="w-user-info-img" src="{{tempFilePaths}}" background-size="cover" /></view>
+                <view class="w-info-input">
+                    <view class="input">
+                        <input type="text" placeholder="请输入你的名字" value="{{userInfo.nickName}}" data-name="username" bindinput="bindInput" />
+                        <view class="widget__line_top"></view>
+                    </view>
+                    <view class="input">
+                        <input type="number" placeholder="请输入常用的手机号" disabled="{{userInfo.phone == undefined ? false : true}}" value="{{userInfo.phone}}" data-name="tel" bindinput="bindInput" />
+                        <text class="changeMobile" bindtap="changeMobile" wx:if="{{userInfo.phone == undefined ? false : true}}">更改</text>
+                    </view>
+                </view>
+            </view>
+        </view>
+        <!-- 公司邮箱 -->
+        <view class="w-card-info-box">
+            <view class="w-user-com">
+                <view class="w-com-txt"><text>公司</text><text class="imp">*</text></view>
+                <view class="com-input">
+                    <input type="text" placeholder="请输入公司名称" value="{{userInfo.company}}" data-name="company" bindinput="bindInput" />
+                </view>
+                <view class="widget__line_top"></view>
+            </view>
+            <view class="w-user-com">
+                <view class="w-com-txt"><text>职务</text><text class="imp">*</text></view>
+                <view class="com-input">
+                    <input type="text" placeholder="请输入职务" value="{{userInfo.job}}" data-name="job" bindinput="bindInput" />
+                </view>
+                <view class="widget__line_top"></view>
+            </view>
+            <view class="w-user-com">
+                <view class="w-com-txt"><text>邮箱</text></view>
+                <view class="com-input">
+                    <input type="text" placeholder="12345@qq.com" value="{{userInfo.mail}}" data-name="email" bindinput="bindInput" />
+                </view>
+            </view>
+        </view>
+
+        <!-- 个人资料 -->
+        <view class="w-card-info-box desc-block">
+            <view class="w-user-com">
+                <view class="w-com-txt"><text>简介</text></view>
+                <view class="com-input">
+                    <textarea maxlength="180" placeholder="这个家伙很懒，什么都没留下…" value="{{userInfo.remark}}" data-name="desc" bindinput="bindInput"></textarea>
+                </view>
+            </view>
+        </view>
+        <view>
+            <button type="primary" class="setBtn creatBtn" bindtap="creatCard">{{userInfo.phone == '' ? '创建' : '保存'}}</button>
+        </view>
+    </view>
+</view>

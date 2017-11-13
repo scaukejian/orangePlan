@@ -1,0 +1,145 @@
+/**index.wxss**/
+
+.userinfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.userinfo-avatar {
+  width: 128rpx;
+  height: 128rpx;
+  margin: 20rpx;
+  border-radius: 50%;
+}
+
+.userinfo-nickname {
+  color: #aaa;
+}
+
+.usermotto {
+  margin-top: 200px;
+}
+
+.note_content {
+  font-size: 16px;
+  color: #636363;
+  font-family: "Verdana";
+  padding: 10px 3px 3px 10px;
+  width: 89%;
+}
+
+.time {
+  width: 100%;
+  padding: 0px 0px 10px 10px;
+  font-size: 12px;
+  color: #999;
+  font-weight: normal;
+  font-style: italic;
+  border-bottom: 1px #e6e6e6 solid;
+}
+
+.inline-view {
+  display: inline-block;
+}
+
+.note-view {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.finish-view {
+  width: 5%;
+  display: flex;
+  zoom: 80%;
+  padding: 18px 0px 0px 3px;
+  margin-left: 3px;
+  justify-content: center;
+  
+}
+
+.note_add_btn {
+  position: fixed;
+  background-color: #5bccfc;
+  bottom: 20rpx;
+  right: 75rpx;
+  _position: absolute;
+  color: #fff;
+  border-radius: 95%;
+  
+}
+
+.add_view {
+  position: fixed;
+  bottom: 0rpx;
+  right: 88rpx;
+  _position: absolute;
+  color: white;
+}
+.note_add_screen {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #000;
+  opacity: 0.2;
+  overflow: hidden;
+  z-index: 1000;
+  color: #fff;
+}
+
+.note_add_box {
+  width: 100%;
+  overflow: hidden;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 2000;
+  background: #fff;
+  color: #5bccfc;
+  /*display: flex;
+  flex-direction: column;
+  justify-content: center;*/
+}
+
+.btn-line {
+  width: 1px;
+  background-color: #bfefff;
+}
+
+.btn-view {
+  width: 100%;
+  display: flex;
+  height: 40px;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.line-top {
+  width: 100%;
+  height: 1px;
+  background-color: #bfefff;
+}
+
+.btn-cancel {
+  width: 49%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.dialog-title {
+  margin-top: 20px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.input-style {
+  height: 30px;
+  border: 1px #bfefff solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 30px 10px 0px 10px;
+}

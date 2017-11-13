@@ -1,0 +1,55 @@
+<!--index.wxml-->
+<view class="container"
+bindtap = "handletap" bindtouchstart = "handletouchtart" bindtouchmove="handletouchmove" bindtouchend="handletouchend">
+  <!-- <view  bindtap="bindViewTap" class="userinfo">
+    <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" background-size="cover"></image>
+    <text class="userinfo-nickname">{{userInfo.nickName}}</text>
+  </view> -->
+
+  <!-- 计划文件夹导航栏 -->
+  <scroll-view class="scroll-view">
+    <view wx:for="{{folderList}}" wx:for-index="index" wx:for-item="item" class="navigate-view">
+      <view id="{{item.id}}" data-folderIndex="{{index}}" bindtap="goNoteList">{{item.name}}</view>
+    </view>
+  </scroll-view>
+  <!-- 计划列表 -->
+  <view class="note-view" wx:for="{{noteList}}" wx:for-index="index" wx:for-item="item"
+   
+  >
+    <!-- 计划内容 -->
+    <view id="{{item.id}}" data-content="{{item.content}}" data-display="{{item.display}}" class="inline-view note_content" bindtap="editNotebtn"
+     bindtouchstart="mytouchstart" bindtouchend="mytouchend" catchtap="updateOrDelete"  
+    >{{item.content}}
+      
+    </view>
+    <!-- 是否完成按钮 -->
+    <view class="inline-view finish-view">
+      <checkbox id="{{item.id}}" data-finish="{{item.finish}}" checked="{{item.finish == 1 ? 'checked' : ''}}" bindtap="changeFinish" value="{{finish}}"/>
+    </view>
+    <!-- 计划时间 -->
+      <view class="time">{{index + 1}}、{{item.updateTime}}
+        <!-- 置顶/收藏按钮 -->
+        <text id="{{item.id}}" data-top="{{item.top}}" wx:if="{{item.top == 1}}" style="color:#36648B;font-style:normal;padding-left:15px;" bindtap="changeTop">置顶</text>
+        <text id="{{item.id}}" data-top="{{item.top}}" wx:else style="font-style:normal;padding-left:15px;" bindtap="changeTop">点我</text>
+      </view>
+  </view>
+  <!--新增按钮-->
+  <!-- <button class="note_add_btn" bindtap="addNotebtn"><view class='add_view'>+</view></button>   -->
+  <button  size="mini"  class="note_add_btn" bindtap="addNotebtn">+</button>  
+  <view class="note_add_screen" bindtap="hideModal" wx:if="{{showModalStatus}}"></view>
+  <view animation="{{animationData}}" class="note_add_box" wx:if="{{showModalStatus}}">
+    <!--对话框标题-->
+    <view class="dialog-title">请输入计划内容</view>
+    <view class="section" >
+      <input id="note_content_area" bindchange="input_content" class="input-style" value="{{noteContent}}" />
+      <!-- <textarea id="note_content_area" bindblur="input_content" class="input-style" value="{{noteContent}}" /> -->
+    </view>
+    <!--对话框按钮-->
+    <view class="line-top"></view>
+    <view class="btn-view">
+      <view class="btn-cancel" bindtap="click_cancel">取 消</view>
+      <view class="btn-line"></view>
+      <view class="btn-cancel" id="{{noteId}}" bindtap="click_ok">确 定</view>
+    </view>
+  </view>
+</view>
