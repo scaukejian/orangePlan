@@ -46,7 +46,7 @@ App({
                     //4.解密成功后 获取自己服务器返回的结果
                     if (data.data.status == "success") {
                       wx.setStorageSync('openId', data.data.data.openId);
-                      wx.setStorageSync('userId', data.data.data.userId);
+                      wx.setStorageSync('userId', data.data.data.userId);//把当前登录用户userId保存起来
                       that.globalData.userInfo = data.data.data
                       typeof cb == "function" && cb(that.globalData.userInfo);
 
