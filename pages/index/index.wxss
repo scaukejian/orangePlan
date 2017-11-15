@@ -55,7 +55,7 @@
   padding: 18px 0px 0px 3px;
   margin-left: 3px;
   justify-content: center;
-  
+
 }
 
 .note_add_btn {
