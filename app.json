@@ -1,15 +1,7 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/logs/logs",
-    "page/component/index",
-    "page/component/component-pages/mine/mine",
-    "page/component/component-pages/list/list",
-    "page/component/component-pages/userinfo/userinfo",
-    "page/component/component-pages/sendCode/sendCode",
-    "page/component/component-pages/myInfo/myInfo",
-    "page/component/component-pages/cList/cList"
-
+    "pages/logs/logs"
   ],
   "window": {
     "navigationBarTextStyle": "white",

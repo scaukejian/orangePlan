@@ -47,6 +47,7 @@ App({
                                         if (data.data.status == "success") {
                                             wx.setStorageSync('openId', data.data.data.openId);
                                             wx.setStorageSync('userId', data.data.data.userId);
+                                            wx.setStorageSync('folderNameList', data.data.folderNameList);
                                             that.globalData.userInfo = data.data;
                                             typeof cb == "function" && cb(that.globalData.userInfo)
                                         } else {

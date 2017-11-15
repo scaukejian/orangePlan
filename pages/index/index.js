@@ -3,6 +3,7 @@
 var utils = require('../../utils/util.js')
 var app = getApp();
 var inputinfo = "";
+var searchInputInfo = "";
 var currentFolderId = 0;
 var currentFolderIndex = 0;
 var mini = 1;
@@ -22,8 +23,11 @@ Page({
         text: "没有滑动",
         currentGesture: 0,
         folderListSize: 0,
-        array: ['美国', '中国', '巴西', '日本'],
-        index:0
+        folderNameList: [],
+        searchShow:false,
+        folderShow:true,
+        index:0,
+        show: false
     },
     //事件处理函数
     bindViewTap: function () {
@@ -39,19 +43,30 @@ Page({
                 that.setData({
                     userId: userInfoData.data.userId,
                     folderList: userInfoData.folderList,
-                    noteList: userInfoData.noteList
+                    noteList: userInfoData.noteList,
+                    folderNameList: userInfoData.folderNameList
                 });
+
+                if (currentFolderId == null || currentFolderId <= 0) {
+                    currentFolderId = that.data.folderList[0].id;
+                    currentFolderIndex = 0;
+                }
+                if (that.data.noteList != null && that.data.noteList.length > 0) {
+                    that.setData({
+                        show: true
+                    });
+                }
             })
         } else {
             that.setData({
-                userId: wx.getStorageSync('userId')
+                userId: wx.getStorageSync('userId'),
+                folderNameList: wx.getStorageSync('folderNameList')
             });
             that.getFolderData();
         }
     },
     onPullDownRefresh: function () {
-        // 页面相关事件处理函数--监听用户下拉动作
-        this.getFolderData();
+        this.getNoteData(currentFolderId, searchInputInfo);
     },
     getFolderData: function () {//定义函数名称
         var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
@@ -77,7 +92,7 @@ Page({
                         currentFolderIndex = 0;
                     }
 
-                    that.getNoteData(currentFolderId);
+                    that.getNoteData(currentFolderId, searchInputInfo);
                 } else if (result.status == 'failed') {
                     if (result.message) {
                         app.alertBox(result.message)
@@ -100,15 +115,17 @@ Page({
             }//请求完成后执行的函数
         });
     },
-    goNoteList: function (e) {
-        var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
-        var folderId = e.currentTarget.id;
-        var folderIndex = e.currentTarget.dataset.folderIndex;
+    bindPickerChange: function(e) {
+        var that = this;
+        that.setData({
+            index: e.detail.value
+        })
+        var folderId = that.data.folderList[that.data.index].id;
         currentFolderId = folderId;
-        currentFolderIndex = folderIndex;
-        that.getNoteData(currentFolderId);
+        currentFolderIndex = e.detail.value;
+        that.getNoteData(currentFolderId, searchInputInfo);
     },
-    getNoteData: function (folderId) {//定义函数名称
+    getNoteData: function (folderId, searchContent) {//定义函数名称
         var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
         wx.request({
             url: 'https://hellogood.top/hellogood_api/note/getNoteList.do',//请求地址
@@ -116,6 +133,7 @@ Page({
                 display: 1,
                 folderId: folderId,
                 userId: that.data.userId,
+                content: searchContent,
                 page: 1,
                 pageSize: 10,
                 mini: mini
@@ -128,6 +146,15 @@ Page({
                     that.setData({
                         noteList: res.data.dataList
                     });
+                    if (that.data.noteList != null && that.data.noteList.length > 0) {
+                        that.setData({
+                            show: true
+                        });
+                    } else {
+                        that.setData({
+                            show: false
+                        });
+                    }
                     //格式化
                     var tempList = that.data.noteList;
                     for (var i = 0; i < tempList.length; i++) {
@@ -153,10 +180,12 @@ Page({
             fail: function (err) {
                 console.log(err);
                 showRequestInfo();
-            },//请求失败
-            complete: function () {
-
-            }//请求完成后执行的函数
+            },
+            complete: function() {
+                // complete
+                wx.hideNavigationBarLoading() //完成停止加载
+                wx.stopPullDownRefresh() //停止下拉刷新
+            }
         });
     },
     changeFinish: function (e) {
@@ -175,7 +204,7 @@ Page({
                 //如果在sucess直接写this就变成了wx.request()的this了.必须为getdata函数的this,不然无法重置调用函数
                 var result = res.data
                 if (result.status == 'success') {
-                    that.getFolderData();
+                    that.getNoteData(currentFolderId, searchInputInfo);
                     if (finish == 1) {
                         wx.showToast({
                             title: '已完成',
@@ -228,7 +257,7 @@ Page({
                 //如果在sucess直接写this就变成了wx.request()的this了.必须为getdata函数的this,不然无法重置调用函数
                 var result = res.data
                 if (result.status == 'success') {
-                    that.getFolderData();
+                    that.getNoteData(currentFolderId, searchInputInfo);
                     if (top == 1) {
                         wx.showToast({
                             title: '已置顶',
@@ -326,7 +355,6 @@ Page({
     },
     click_ok: function (e) {
         var that = this;  // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
-
         if (inputinfo == '') {
             app.alertBox('计划内容不能为空!');
             return;
@@ -357,7 +385,7 @@ Page({
                 //如果在sucess直接写this就变成了wx.request()的this了.必须为getdata函数的this,不然无法重置调用函数
                 var result = res.data
                 if (result.status == 'success') {
-                    that.getFolderData();
+                    that.getNoteData(currentFolderId, searchInputInfo);
                     wx.showToast({
                         title: title,
                         icon: 'success',
@@ -449,7 +477,7 @@ Page({
                 //如果在sucess直接写this就变成了wx.request()的this了.必须为getdata函数的this,不然无法重置调用函数
                 var result = res.data
                 if (result.status == 'success') {
-                    that.getFolderData();
+                    that.getNoteData(currentFolderId, searchInputInfo);
                     if (display == 0) {
                         wx.showToast({
                             title: '已放入回收站',
@@ -489,7 +517,6 @@ Page({
 
 
     handletouchmove: function (event) {
-
         let currentX = event.touches[0].pageX
         let currentY = event.touches[0].pageY
         let tx = currentX - this.data.lastX
@@ -505,22 +532,18 @@ Page({
                 text = "向右滑动"
                 this.data.currentGesture = 2
             }
-
         }
         //上下方向滑动
         else {
             if (ty < 0) {
                 text = "向上滑动"
                 this.data.currentGesture = 3
-
             }
             else if (ty > 0) {
                 text = "向下滑动"
                 this.data.currentGesture = 4
             }
-
         }
-
         //将当前坐标进行保存以进行下一次计算
         this.data.lastX = currentX
         this.data.lastY = currentY
@@ -537,10 +560,6 @@ Page({
     handletouchend: function (event) {
         var currentGesture = this.data.currentGesture;
         var text = this.data.text;
-        console.log(currentGesture);
-        console.log(text);
-        console.log(currentFolderIndex);
-        console.log(this.data.folderListSize);
         if (currentGesture == 1) { //向左滑动
             if (currentFolderIndex < this.data.folderListSize - 1) {
                 currentFolderIndex += 1;
@@ -553,9 +572,7 @@ Page({
                 this.goNoteListMove(currentFolderIndex);
             }
         }
-
         this.data.currentGesture = 0;
-
     },
     goNoteListMove: function (currentFolderIndex) {
         var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
@@ -563,6 +580,30 @@ Page({
         var folderIndex = currentFolderIndex;
         currentFolderId = folderId;
         currentFolderIndex = folderIndex;
-        that.getNoteData(currentFolderId);
+        that.getNoteData(currentFolderId, "");
+    },
+
+    searchIcon: function () {
+        var that = this;
+        that.setData({
+            folderShow: false,
+            searchShow: true
+        })
+    },
+    searchInput: function (e) {
+        searchInputInfo = e.detail.value;
+        console.log(searchInputInfo);
+    },
+    searchNotebtn: function () {
+        var that = this;
+        that.setData({
+            folderShow: true,
+            searchShow: false
+        })
+        console.log("---------"+searchInputInfo+"---");
+        if (searchInputInfo != null) {
+            that.getNoteData(currentFolderId, searchInputInfo);
+            searchInputInfo = "";
+        }
     }
 })

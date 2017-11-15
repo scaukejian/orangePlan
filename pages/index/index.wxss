@@ -97,7 +97,7 @@
   left: 0;
   z-index: 2000;
   background: #fff;
-  color: #5bccfc;
+  color: #10aeff;
   /*display: flex;
   flex-direction: column;
   justify-content: center;*/
@@ -122,24 +122,89 @@
   background-color: #bfefff;
 }
 
-.btn-cancel {
-  width: 49%;
+.btn-cancel,.btn-submit {
+  width: 50%;
   text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
+.btn-submit{
+  background-color: #10aeff;
+  color:white;
+}
+
+
 .dialog-title {
   margin-top: 20px;
   text-align: center;
   margin-bottom: 15px;
+
 }
 
 .input-style {
-  height: 30px;
+  height: 100px;
+  width:90%;
+  margin: 30px auto 0px auto;
   border: 1px #bfefff solid;
   border-radius: 5px;
   padding: 10px;
-  margin: 30px 10px 0px 10px;
 }
+.navigate-input{
+  padding: 0px;
+  margin: 0px;
+}
+.navigate-view {
+  white-space: nowrap;
+  display: flex;
+  width: 100%;
+  border-top: 1px #E6E6E6 solid;
+  border-bottom: 1px #E6E6E6 solid;
+}
+.navigate-inline {
+  display: inline-block;
+  color: #53b6e0;
+  height: 25px;
+  line-height: 25px;
+  font-size: 22px;
+  padding: 2px;
+  text-align: center;
+}
+.search-icon {
+  width:10%;
+}
+.navigate-picker{
+  width:80%;
+  text-align: center;
+  border-left:1px #E6E6E6 solid;
+  border-right:1px #E6E6E6 solid;
+  border-radius: 2px;
+}
+.addBtn{
+  width:10%;
+  padding: 0px;
+}
+.addBtnText {
+  font-size: 40px;
+}
+.navigate-input {
+  width:80%;
+  text-align: left;
+  border-right:1px #E6E6E6 solid;
+  padding:0px 0px 0px 5px;
+  margin: 0px;
+  font-size: 18px;
+
+}
+.searchBtn {
+  width:20%;
+  padding: 0px;
+}
+.searchNoteText{
+  height: 25px;
+  line-height: 25px;
+  font-size: 18px;
+ }
+
+

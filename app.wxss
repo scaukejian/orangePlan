@@ -245,21 +245,4 @@ checkbox, radio {
   padding-left: 0;
   padding-right: 0;
 }
-.scroll-view {
-  white-space: nowrap;
-  display: flex;
-  width: 100%;
-  border-bottom: 1px #E6E6E6 solid;
-}
-.navigate-view {
-  display: inline-block;
-  color: #53b6e0;
-  padding: 0px 73px 0px 10px;
-  height: 40px;
-  line-height: 40px;
-  font-size: 20px;
-  
-}
-
-
 
