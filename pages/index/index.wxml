@@ -1,5 +1,4 @@
 <!--index.wxml-->
-
 <view class="container">
 
     <!-- 显示文件夹-->
@@ -9,28 +8,33 @@
             <icon class="search-icon navigate-inline" type="search" size="25" color="#5BCCFC" bindtap="searchIcon"/>
             <!-- 计划下拉框 -->
             <picker class="navigate-picker" bindchange="bindPickerChange" value="{{index}}" range="{{folderNameList}}">
-                <view class="navigate-inline">{{folderNameList[index]}}</view>
+                <view class="navigate-inline folderName">
+                    <view class="beforeFolder">{{beforeFolderName}}</view>
+                    <view class="folder">{{folderNameList[index]}}</view>
+                    <view class="afterFolder">微风 阴雨</view>
+                </view>
             </picker>
             <!--新增按钮-->
             <view class="addBtn navigate-inline" bindtap="addNotebtn">
                 <text class="addBtnText">+</text>
             </view>
-            <form bindsubmit="click_ok">
+            <form bindsubmit="click_ok" id="{{noteId}}">
                 <!--增加修改弹出层-->
                 <view class="note_add_screen" bindtap="hideModal" wx:if="{{showModalStatus}}"></view>
                 <view animation="{{animationData}}" class="note_add_box" wx:if="{{showModalStatus}}">
                     <!--对话框标题-->
                     <view class="dialog-title">请输入计划内容</view>
-                    <view class="section">
-                        <textarea id="note_content_area" bindblur="input_content" class="input-style"
-                               value="{{noteContent}}"/>
+                    <view class="section" style="{{height}}">
+                        <textarea id="note_content_area" bindblur="input_content" bindfocus="addHeight"
+                                  class="input-style" focus="false"
+                                  value="{{noteContent}}"/>
                     </view>
                     <!--对话框按钮-->
                     <view class="line-top"></view>
                     <view class="btn-view">
                         <view class="btn-cancel" bindtap="click_cancel">取 消</view>
                         <!-- <view class="btn-cancel" id="{{noteId}}" bindtap="click_ok">确 定</view> -->
-                        <button size="default" formType="submit" class="btn-cancel" id="{{noteId}}"  class="btn-submit">确 定</button>
+                        <button size="default" formType="submit" class="btn-cancel" class="btn-submit">确 定</button>
                     </view>
                 </view>
             </form>
@@ -41,7 +45,7 @@
         <!-- 计划文件夹导航栏 -->
         <view class="navigate-view">
             <!--搜索组合-->
-            <input class="navigate-input navigate-inline" maxlength="20" placeholder="最大输入长度20" auto-focus
+            <input class="navigate-input navigate-inline" maxlength="5000" auto-focus
                    bindinput="searchInput"/>
             <view class="searchBtn navigate-inline" bindtap="searchNotebtn">
                 <text class="searchNoteText">搜索</text>
@@ -49,22 +53,13 @@
         </view>
     </view>
 
-    <!-- <view  bindtap="bindViewTap" class="userinfo">
-      <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" background-size="cover"></image>
-      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-    </view> -->
-
-    <!--<block bindtap = "handletap" bindtouchstart = "handletouchtart" bindtouchmove="handletouchmove" bindtouchend="handletouchend">-->
     <!-- 计划列表 -->
     <view wx:if="{{show}}">
         <view class="note-view" wx:for="{{noteList}}" wx:for-index="index" wx:for-item="item">
             <!-- 计划内容 -->
             <view id="{{item.id}}" data-content="{{item.content}}" data-display="{{item.display}}"
                   class="inline-view note_content" bindtap="editNotebtn"
-                  bindtouchstart="mytouchstart" bindtouchend="mytouchend" catchtap="updateOrDelete"
-            >{{item.content}}
-
-            </view>
+                  bindtouchstart="mytouchstart" bindtouchend="mytouchend" catchtap="updateOrDelete">{{item.content}}</view>
             <!-- 是否完成按钮 -->
             <view class="inline-view finish-view">
                 <checkbox id="{{item.id}}" data-finish="{{item.finish}}" checked="{{item.finish == 1 ? 'checked' : ''}}"
@@ -82,9 +77,32 @@
             </view>
         </view>
     </view>
+<!--
+    <view wx:if="{{show}}">
+        <view class="note-view" wx:for="{{noteList}}" wx:for-index="index" wx:for-item="item">
+            &lt;!&ndash; 计划内容 &ndash;&gt;
+            <view id="{{item.id}}" data-content="{{item.content}}" data-display="{{item.display}}"
+                  class="inline-view note_content" bindtap="editNotebtn"
+                  bindtouchstart="mytouchstart" bindtouchend="mytouchend" catchtap="updateOrDelete">{{item.content}}</view>
+            &lt;!&ndash; 是否完成按钮 &ndash;&gt;
+            <view class="inline-view finish-view">
+                <checkbox id="{{item.id}}" data-finish="{{item.finish}}" checked="{{item.finish == 1 ? 'checked' : ''}}"
+                          bindtap="changeFinish" value="{{finish}}"/>
+            </view>
+            &lt;!&ndash; 计划时间 &ndash;&gt;
+            <view class="time">{{index + 1}}、{{item.updateTime}}
+                &lt;!&ndash; 置顶/收藏按钮 &ndash;&gt;
+                <text id="{{item.id}}" data-top="{{item.top}}" wx:if="{{item.top == 1}}"
+                      style="color:#36648B;font-style:normal;padding-left:15px;" bindtap="changeTop">置顶
+                </text>
+                <text id="{{item.id}}" data-top="{{item.top}}" wx:else style="font-style:normal;padding-left:15px;"
+                      bindtap="changeTop">点我
+                </text>
+            </view>
+        </view>
+    </view>
+-->
     <view wx:else style="text-align: center;margin-top: 50%;">
         暂无计划
     </view>
-
-    <!--</block>-->
 </view>

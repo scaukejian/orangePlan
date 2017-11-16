@@ -24,10 +24,13 @@ Page({
         currentGesture: 0,
         folderListSize: 0,
         folderNameList: [],
+        beforeFolderList: [],
         searchShow:false,
         folderShow:true,
         index:0,
-        show: false
+        show: false,
+        beforeFolderName:'',
+        height:''
     },
     //事件处理函数
     bindViewTap: function () {
@@ -44,9 +47,12 @@ Page({
                     userId: userInfoData.data.userId,
                     folderList: userInfoData.folderList,
                     noteList: userInfoData.noteList,
-                    folderNameList: userInfoData.folderNameList
+                    folderNameList: userInfoData.folderNameList,
+                    beforeFolderList: userInfoData.beforeFolderList
                 });
-
+                that.setData({
+                    beforeFolderName: that.data.beforeFolderList[0]
+                });
                 if (currentFolderId == null || currentFolderId <= 0) {
                     currentFolderId = that.data.folderList[0].id;
                     currentFolderIndex = 0;
@@ -60,7 +66,11 @@ Page({
         } else {
             that.setData({
                 userId: wx.getStorageSync('userId'),
-                folderNameList: wx.getStorageSync('folderNameList')
+                folderNameList: wx.getStorageSync('folderNameList'),
+                beforeFolderList: wx.getStorageSync('beforeFolderList')
+            });
+            that.setData({
+                beforeFolderName: that.data.beforeFolderList[0]
             });
             that.getFolderData();
         }
@@ -118,7 +128,8 @@ Page({
     bindPickerChange: function(e) {
         var that = this;
         that.setData({
-            index: e.detail.value
+            index: e.detail.value,
+            beforeFolderName: that.data.beforeFolderList[e.detail.value]
         })
         var folderId = that.data.folderList[that.data.index].id;
         currentFolderId = folderId;
@@ -352,6 +363,10 @@ Page({
     input_content: function (e) {
         inputinfo = e.detail.value;
         console.log(inputinfo);
+        var that = this;
+        that.setData({
+            height: "margin-bottom:30px"
+        })
     },
     click_ok: function (e) {
         var that = this;  // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
@@ -600,10 +615,15 @@ Page({
             folderShow: true,
             searchShow: false
         })
-        console.log("---------"+searchInputInfo+"---");
         if (searchInputInfo != null) {
             that.getNoteData(currentFolderId, searchInputInfo);
             searchInputInfo = "";
         }
+    },
+    addHeight: function () {
+        var that = this;
+        that.setData({
+            height: "margin-bottom:450rpx"
+        })
     }
 })

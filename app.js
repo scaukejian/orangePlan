@@ -3,7 +3,7 @@ var openId;
 //app.js
 App({
     onLaunch: function () {
-        console.log('App Launch')
+        console.log('App Launch');
         //调用API从本地缓存中获取数据
         var logs = wx.getStorageSync('logs') || [],
             openId = wx.getStorageSync('openId')
@@ -12,6 +12,8 @@ App({
         if (!openId) {
             this.getUserInfo();
         }
+        this.globalData.deviceInfo = wx.getSystemInfoSync();
+        console.log(this.globalData.deviceInfo);
     },
     getUserInfo: function (cb) {
         var that = this
@@ -48,6 +50,7 @@ App({
                                             wx.setStorageSync('openId', data.data.data.openId);
                                             wx.setStorageSync('userId', data.data.data.userId);
                                             wx.setStorageSync('folderNameList', data.data.folderNameList);
+                                            wx.setStorageSync('beforeFolderList', data.data.beforeFolderList);
                                             that.globalData.userInfo = data.data;
                                             typeof cb == "function" && cb(that.globalData.userInfo)
                                         } else {
@@ -91,6 +94,7 @@ App({
     globalData: {
         openId: '',
         userInfo: null,
+        deviceInfo:{},
         ROOT: 'https://hellogood.top/hellogood_api/'
     }
 })

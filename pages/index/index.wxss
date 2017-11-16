@@ -171,6 +171,34 @@
   padding: 2px;
   text-align: center;
 }
+.folderName {
+  width:100%;
+}
+.beforeFolder {
+  width:38%;
+  padding: 0px;
+  margin: 0px;
+  font-size: 12px;
+  text-align: left;
+  display: inline-block;
+}
+.folder {
+  width:21%;
+  padding: 0px;
+  margin: 0px;
+  text-align: center;
+  display: inline-block;
+}
+.afterFolder{
+  padding: 0px;
+  font-size: 12px;
+  width:39%;
+  padding-right: 6px;
+  margin-right: 8px;
+
+  text-align: right;
+  display: inline-block;
+}
 .search-icon {
   width:10%;
 }
