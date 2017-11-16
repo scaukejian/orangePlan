@@ -30,8 +30,21 @@ Page({
         index:0,
         show: false,
         beforeFolderName:'',
-        height:''
+        height_textarea:'',
+        msgList:[],
+        height:0,
+        scrollY:true
     },
+    swipeCheckX:35, //激活检测滑动的阈值
+    swipeCheckState:0, //0未激活 1激活
+    maxMoveLeft:185, //消息列表项最大左滑距离
+    correctMoveLeft:175, //显示菜单时的左滑距离
+    thresholdMoveLeft: 75,//左滑阈值，超过则显示菜单
+    lastShowMsgId:'', //记录上次显示菜单的消息id
+    moveX:0,  //记录平移距离
+    showState:0, //0 未显示菜单 1显示菜单
+    touchStartState:0, // 开始触摸时的状态 0 未显示菜单 1 显示菜单
+    swipeDirection:0, //是否触发水平滑动 0:未触发 1:触发水平滑动 2:触发垂直滑动
     //事件处理函数
     bindViewTap: function () {
         wx.navigateTo({
@@ -61,6 +74,22 @@ Page({
                     that.setData({
                         show: true
                     });
+                    that.pixelRatio = app.globalData.deviceInfo.pixelRatio;
+                    var windowHeight = app.globalData.deviceInfo.windowHeight;
+                    var height = windowHeight;
+                    var tempList = that.data.noteList;
+                    for (var i = 0; i < tempList.length; i++) {
+                        var note = tempList[i];
+                        var msg = {};
+                        msg.id = 'id-' + i+1;
+                        msg.noteId = note.id;
+                        msg.content = note.content;
+                        msg.top = note.top;
+                        msg.display = note.display;
+                        msg.updateTime = utils.formatTime(new Date(note.updateTime));
+                        that.data.msgList.push(msg);
+                    }
+                    that.setData({msgList:that.data.msgList, height:height});
                 }
             })
         } else {
@@ -166,14 +195,31 @@ Page({
                             show: false
                         });
                     }
+
                     //格式化
                     var tempList = that.data.noteList;
                     for (var i = 0; i < tempList.length; i++) {
                         tempList[i].updateTime = utils.formatTime(new Date(tempList[i].updateTime));
                     }
-                    that.setData({
+                    that.pixelRatio = app.globalData.deviceInfo.pixelRatio;
+                    var windowHeight = app.globalData.deviceInfo.windowHeight;
+                    var height = windowHeight;
+                    that.data.msgList.splice(0,that.data.msgList.length);//清空数组
+                    for (var i = 0; i < tempList.length; i++) {
+                        var note = tempList[i];
+                        var msg = {};
+                        msg.id = 'id-' + i+1;
+                        msg.noteId = note.id;
+                        msg.content = note.content;
+                        msg.top = note.top;
+                        msg.display = note.display;
+                        msg.updateTime = utils.formatTime(new Date(note.updateTime));
+                        that.data.msgList.push(msg);
+                    }
+                    that.setData({msgList:that.data.msgList, height:height});
+                    /*that.setData({
                         noteList: tempList
-                    })
+                    })*/
                 } else if (result.status == 'failed') {
                     if (result.message) {
                         app.alertBox(result.message)
@@ -220,13 +266,13 @@ Page({
                         wx.showToast({
                             title: '已完成',
                             icon: 'success',
-                            duration: 300
+                            duration: 500
                         })
                     } else {
                         wx.showToast({
                             title: '未完成',
                             icon: 'success',
-                            duration: 300
+                            duration: 500
                         })
                     }
                 } else if (result.status == 'failed') {
@@ -254,7 +300,7 @@ Page({
     },
     changeTop: function (e) {
         var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
-        var noteId = e.currentTarget.id;
+        var noteId = e.currentTarget.dataset.noteid;
         var top = 1 - e.currentTarget.dataset.top;
         wx.request({
             url: 'https://hellogood.top/hellogood_api/note/setTop.do',//请求地址
@@ -268,18 +314,19 @@ Page({
                 //如果在sucess直接写this就变成了wx.request()的this了.必须为getdata函数的this,不然无法重置调用函数
                 var result = res.data
                 if (result.status == 'success') {
+                    that.translateXMsgItem(e.currentTarget.id, 0, 0);
                     that.getNoteData(currentFolderId, searchInputInfo);
                     if (top == 1) {
                         wx.showToast({
                             title: '已置顶',
                             icon: 'success',
-                            duration: 300
+                            duration: 500
                         })
                     } else {
                         wx.showToast({
                             title: '已取消置顶',
                             icon: 'success',
-                            duration: 300
+                            duration: 500
                         })
                     }
                 } else if (result.status == 'failed') {
@@ -365,7 +412,7 @@ Page({
         console.log(inputinfo);
         var that = this;
         that.setData({
-            height: "margin-bottom:30px"
+            height_textarea: "margin-bottom:30px"
         })
     },
     click_ok: function (e) {
@@ -404,7 +451,7 @@ Page({
                     wx.showToast({
                         title: title,
                         icon: 'success',
-                        duration: 300
+                        duration: 500
                     });
                     that.hideModal();
                     inputinfo = "";
@@ -478,7 +525,7 @@ Page({
 
         }
     },
-    setRecycle: function (noteId, display) {
+    setRecycle: function (noteId, display, e) {
         var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
         wx.request({
             url: 'https://hellogood.top/hellogood_api/note/setRecycle.do',//请求地址
@@ -497,15 +544,25 @@ Page({
                         wx.showToast({
                             title: '已放入回收站',
                             icon: 'success',
-                            duration: 300
+                            duration: 500
                         })
                     } else {
                         wx.showToast({
                             title: '已移出回收站',
                             icon: 'success',
-                            duration: 300
+                            duration: 500
                         })
                     }
+                    var animation = wx.createAnimation({duration:200});
+                    animation.height(0).opacity(0).step();
+                    that.animationMsgWrapItem(e.currentTarget.id, animation);
+                    setTimeout(function() {
+                        var index = that.getItemIndex(e.currentTarget.id);
+                        that.data.msgList.splice(index, 1);
+                        that.setData({msgList: s.data.msgList});
+                    }, 200);
+                    that.showState = 0;
+                    that.setData({scrollY:true});
                 } else if (result.status == 'failed') {
                     if (result.message) {
                         app.alertBox(result.message)
@@ -623,7 +680,168 @@ Page({
     addHeight: function () {
         var that = this;
         that.setData({
-            height: "margin-bottom:450rpx"
+            height_textarea: "margin-bottom:450rpx"
         })
+    },
+
+
+    ontouchstart: function(e) {
+        if (this.showState === 1) {
+            this.touchStartState = 1;
+            this.showState = 0;
+            this.moveX = 0;
+            this.translateXMsgItem(this.lastShowMsgId, 0, 100);
+            this.lastShowMsgId = "";
+            return;
+        }
+        this.firstTouchX = e.touches[0].clientX;
+        this.firstTouchY = e.touches[0].clientY;
+        if (this.firstTouchX > this.swipeCheckX) {
+            this.swipeCheckState = 1;
+        }
+        this.lastMoveTime = e.timeStamp;
+    },
+
+    ontouchmove: function(e) {
+        if (this.swipeCheckState === 0) {
+            return;
+        }
+        //当开始触摸时有菜单显示时，不处理滑动操作
+        if (this.touchStartState === 1) {
+            return;
+        }
+        var moveX = e.touches[0].clientX - this.firstTouchX;
+        var moveY = e.touches[0].clientY - this.firstTouchY;
+        //已触发垂直滑动，由scroll-view处理滑动操作
+        if (this.swipeDirection === 2) {
+            return;
+        }
+        //未触发滑动方向
+        if (this.swipeDirection === 0) {
+            console.log(Math.abs(moveY));
+            //触发垂直操作
+            if (Math.abs(moveY) > 4) {
+                this.swipeDirection = 2;
+
+                return;
+            }
+            //触发水平操作
+            if (Math.abs(moveX) > 4) {
+                this.swipeDirection = 1;
+                this.setData({scrollY:false});
+            }
+            else {
+                return;
+            }
+
+        }
+        //禁用垂直滚动
+        // if (this.data.scrollY) {
+        //   this.setData({scrollY:false});
+        // }
+
+        this.lastMoveTime = e.timeStamp;
+        //处理边界情况
+        if (moveX > 0) {
+            moveX = 0;
+        }
+        //检测最大左滑距离
+        if (moveX < -this.maxMoveLeft) {
+            moveX = -this.maxMoveLeft;
+        }
+        this.moveX = moveX;
+        this.translateXMsgItem(e.currentTarget.id, moveX, 0);
+    },
+    ontouchend: function(e) {
+        this.swipeCheckState = 0;
+        var swipeDirection = this.swipeDirection;
+        this.swipeDirection = 0;
+        if (this.touchStartState === 1) {
+            this.touchStartState = 0;
+            this.setData({scrollY:true});
+            return;
+        }
+        //垂直滚动，忽略
+        if (swipeDirection !== 1) {
+            return;
+        }
+        if (this.moveX === 0) {
+            this.showState = 0;
+            //不显示菜单状态下,激活垂直滚动
+            this.setData({scrollY:true});
+            return;
+        }
+        if (this.moveX === this.correctMoveLeft) {
+            this.showState = 1;
+            this.lastShowMsgId = e.currentTarget.id;
+            return;
+        }
+        if (this.moveX < -this.thresholdMoveLeft) {
+            this.moveX = -this.correctMoveLeft;
+            this.showState = 1;
+            this.lastShowMsgId = e.currentTarget.id;
+        }
+        else {
+            this.moveX = 0;
+            this.showState = 0;
+            //不显示菜单,激活垂直滚动
+            this.setData({scrollY:true});
+        }
+        this.translateXMsgItem(e.currentTarget.id, this.moveX, 200);
+        //this.translateXMsgItem(e.currentTarget.id, 0, 0);
+    },
+    onDeleteMsgTap: function(e) {
+        this.deleteMsgItem(e);
+    },
+    onDeleteMsgLongtap: function(e) {
+        console.log(e);
+    },
+    onMarkMsgTap: function(e) {
+        console.log(e);
+    },
+    onMarkMsgLongtap: function(e) {
+        console.log(e);
+    },
+    getItemIndex: function(id) {
+        var msgList = this.data.msgList;
+        for (var i = 0; i < msgList.length; i++) {
+            if (msgList[i].id === id) {
+                return i;
+            }
+        }
+        return -1;
+    },
+    deleteMsgItem: function(e) {
+        var that = this;
+        var noteId = e.currentTarget.dataset.noteid;
+        var display = 1 - e.currentTarget.dataset.display;
+        wx.showModal({
+            title: '删除计划',
+            content: '删除后可在【回收站】中找回',
+            success: function (res) {
+                if (res.confirm) {
+                    that.setRecycle(noteId, display, e);
+                }
+            }
+        })
+    },
+    translateXMsgItem: function(id, x, duration) {
+        var animation = wx.createAnimation({duration:duration});
+        animation.translateX(x).step();
+        this.animationMsgItem(id, animation);
+    },
+    animationMsgItem: function(id, animation) {
+        var index = this.getItemIndex(id);
+        var param = {};
+        var indexString = 'msgList[' + index + '].animation';
+        param[indexString] = animation.export();
+        this.setData(param);
+    },
+    animationMsgWrapItem: function(id, animation) {
+        var index = this.getItemIndex(id);
+        var param = {};
+        var indexString = 'msgList[' + index + '].wrapAnimation';
+        param[indexString] = animation.export();
+        this.setData(param);
     }
 })
