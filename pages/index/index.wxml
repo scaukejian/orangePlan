@@ -65,10 +65,7 @@
                     <view class="msg-text">{{index + 1}}、{{item.updateTime}}
                         <!-- 置顶/收藏按钮 -->
                         <text id="{{item.id}}" data-top="{{item.top}}" wx:if="{{item.top == 1}}"
-                              style="color:#36648B;font-style:normal;padding-left:15px;" bindtap="changeTop">置顶
-                        </text>
-                        <text id="{{item.id}}" data-top="{{item.top}}" wx:else style="font-style:normal;padding-left:15px;"
-                              bindtap="changeTop">点我
+                              style="color:#36648B;font-style:normal;padding-left:15px;">置顶
                         </text>
                     </view>
                 </view>
