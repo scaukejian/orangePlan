@@ -76,8 +76,15 @@ Page({
                     });
                     that.pixelRatio = app.globalData.deviceInfo.pixelRatio;
                     var windowHeight = app.globalData.deviceInfo.windowHeight;
-                    var height = windowHeight;
+                    var brand = app.globalData.deviceInfo.brand;
+                    var height;
+                    if (brand.indexOf("Meizu") != -1) {
+                        height = windowHeight -79;
+                    } else {
+                        height = windowHeight -31;
+                    }
                     var tempList = that.data.noteList;
+                    console.log("1、tempList:"+tempList.length);
                     for (var i = 0; i < tempList.length; i++) {
                         var note = tempList[i];
                         var msg = {};
@@ -198,12 +205,19 @@ Page({
 
                     //格式化
                     var tempList = that.data.noteList;
+                    console.log("2、tempList:"+tempList.length);
                     for (var i = 0; i < tempList.length; i++) {
                         tempList[i].updateTime = utils.formatTime(new Date(tempList[i].updateTime));
                     }
                     that.pixelRatio = app.globalData.deviceInfo.pixelRatio;
                     var windowHeight = app.globalData.deviceInfo.windowHeight;
-                    var height = windowHeight;
+                    var brand = app.globalData.deviceInfo.brand;
+                    var height;
+                    if (brand.indexOf("Meizu") != -1) {
+                        height = windowHeight - 79;
+                    } else {
+                        height = windowHeight - 31;
+                    }
                     that.data.msgList.splice(0,that.data.msgList.length);//清空数组
                     for (var i = 0; i < tempList.length; i++) {
                         var note = tempList[i];
@@ -410,10 +424,6 @@ Page({
     input_content: function (e) {
         inputinfo = e.detail.value;
         console.log(inputinfo);
-        var that = this;
-        that.setData({
-            height_textarea: "margin-bottom:30px"
-        })
     },
     click_ok: function (e) {
         var that = this;  // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
@@ -478,7 +488,11 @@ Page({
             }//请求完成后执行的函数
         });
     },
-    editNotebtn: function (noteId, content) {
+    editNotebtn: function (e) {
+        var that = this;
+        //触摸时间距离页面打开的毫秒数
+        var noteId = e.currentTarget.dataset.noteid;
+        var content = e.currentTarget.dataset.content;
         var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
         that.showModal();
         that.setData({
@@ -539,6 +553,7 @@ Page({
                 //如果在sucess直接写this就变成了wx.request()的this了.必须为getdata函数的this,不然无法重置调用函数
                 var result = res.data
                 if (result.status == 'success') {
+                    that.translateXMsgItem(e.currentTarget.id, 0, 0);
                     that.getNoteData(currentFolderId, searchInputInfo);
                     if (display == 0) {
                         wx.showToast({
@@ -553,16 +568,6 @@ Page({
                             duration: 500
                         })
                     }
-                    var animation = wx.createAnimation({duration:200});
-                    animation.height(0).opacity(0).step();
-                    that.animationMsgWrapItem(e.currentTarget.id, animation);
-                    setTimeout(function() {
-                        var index = that.getItemIndex(e.currentTarget.id);
-                        that.data.msgList.splice(index, 1);
-                        that.setData({msgList: s.data.msgList});
-                    }, 200);
-                    that.showState = 0;
-                    that.setData({scrollY:true});
                 } else if (result.status == 'failed') {
                     if (result.message) {
                         app.alertBox(result.message)
@@ -677,14 +682,6 @@ Page({
             searchInputInfo = "";
         }
     },
-    addHeight: function () {
-        var that = this;
-        that.setData({
-            height_textarea: "margin-bottom:450rpx"
-        })
-    },
-
-
     ontouchstart: function(e) {
         if (this.showState === 1) {
             this.touchStartState = 1;

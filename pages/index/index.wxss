@@ -144,9 +144,9 @@
 }
 
 .input-style {
-  height: 100px;
+  height: 40px;
   width:90%;
-  margin: 30px auto 0px auto;
+  margin: 15px auto;
   border: 1px #bfefff solid;
   border-radius: 5px;
   padding: 10px;
@@ -246,7 +246,6 @@
   position: relative;
   left:0;
   top:0;
-  overflow: hidden;
 }
 
 .msg {
@@ -257,21 +256,24 @@
   top:0;
   z-index: 100;
   background-color: #FFF;
-  overflow: hidden;
 }
 
 .note_contents {
   position: absolute;
   left: 10rpx;
   top: 20rpx;
+  padding-left: 6px;
+  padding-right: 6px;
 }
 
 .msg-text {
   position: absolute;
   left: 10rpx;
   bottom: 20rpx;
-  font-size: 80%;
+  font-size: 12px;
   color: rgb(127, 127, 127);
+  padding-left: 6px;
+  padding-right: 6px;
 }
 
 .msg-menu {
@@ -287,19 +289,19 @@
   position: absolute;
   width: 150rpx;
   height: 148rpx;
-  top:1rpx;
-  right: 150rpx;
+  top:0rpx;
+  right: 180rpx;
   background-color: rgb(255, 58, 50);
   color:#FFF;
   text-align: center;
   line-height:150rpx;
 }
 
-.menu-mark {
+.menu-finish {
   position: absolute;
-  width: 150rpx;
+  width: 180rpx;
   height: 148rpx;
-  top:1rpx;
+  top:0rpx;
   right: 0;
   background-color: #10aeff;
   color:#FFF;

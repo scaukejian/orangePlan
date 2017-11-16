@@ -24,13 +24,13 @@
                 <view animation="{{animationData}}" class="note_add_box" wx:if="{{showModalStatus}}">
                     <!--对话框标题-->
                     <view class="dialog-title">请输入计划内容</view>
-                    <view class="section" style="{{height_textarea}}">
-                        <textarea id="note_content_area" bindblur="input_content" bindfocus="addHeight"
-                                  class="input-style" focus="false"
-                                  value="{{noteContent}}"/>
+                    <view class="section">
+                        <input id="note_content_area" bindinput="input_content"
+                                  class="input-style" maxlength="100"
+                               value="{{noteContent}}"/>
                     </view>
-                    <!--对话框按钮-->
-                    <view class="line-top"></view>
+                    <!--对话框按钮  style="{{height_textarea}}"-->
+                    <view class="line-top" ></view>
                     <view class="btn-view">
                         <view class="btn-cancel" bindtap="click_cancel">取 消</view>
                         <!-- <view class="btn-cancel" id="{{noteId}}" bindtap="click_ok">确 定</view> -->
@@ -45,7 +45,7 @@
         <!-- 计划文件夹导航栏 -->
         <view class="navigate-view">
             <!--搜索组合-->
-            <input class="navigate-input navigate-inline" maxlength="5000" auto-focus
+            <input class="navigate-input navigate-inline" maxlength="100" auto-focus
                    bindinput="searchInput"/>
             <view class="searchBtn navigate-inline" bindtap="searchNotebtn">
                 <text class="searchNoteText">搜索</text>
@@ -59,7 +59,7 @@
             <view wx:for="{{msgList}}" wx:for-index="index" wx:for-item="item" wx:key="id"  class='msg-item' animation='{{item.wrapAnimation}}'>
                 <view id='{{item.id}}' class='msg' animation='{{item.animation}}' bindtouchstart='ontouchstart' bindtouchmove='ontouchmove' bindtouchend='ontouchend'>
                     <!-- 计划内容 -->
-                    <view id="{{item.id}}" data-content="{{item.content}}"
+                    <view id="{{item.id}}" data-noteid="{{item.noteId}}" data-content="{{item.content}}"
                           class="note_contents" bindtap="editNotebtn">{{item.content}}</view>
                     <!-- 计划时间 -->
                     <view class="msg-text">{{index + 1}}、{{item.updateTime}}
@@ -73,8 +73,8 @@
                     <view id='{{item.id}}' data-noteid="{{item.noteId}}" data-display="{{item.display}}" class='menu-delete' bindtap='onDeleteMsgTap'>
                         删除
                     </view>
-                    <view id='{{item.id}}' data-noteid="{{item.noteId}}" data-top="{{item.top}}" class='menu-mark' bindtap='changeTop'>
-                        置顶
+                    <view id='{{item.id}}' data-noteid="{{item.noteId}}" data-top="{{item.top}}" class='menu-finish' bindtap='changeTop'>
+                        {{item.top == 1 ? "取消置顶" : "置顶"}}
                     </view>
                 </view>
             </view>
