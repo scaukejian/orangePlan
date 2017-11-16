@@ -57,10 +57,10 @@
     <view wx:if="{{show}}">
         <scroll-view style='height:{{height}}px;' scroll-y='{{scrollY}}' class='msg-list'>
             <view wx:for="{{msgList}}" wx:for-index="index" wx:for-item="item" wx:key="id"  class='msg-item' animation='{{item.wrapAnimation}}'>
-                <view id='{{item.id}}' class='msg' animation='{{item.animation}}' bindtouchstart='ontouchstart' bindtouchmove='ontouchmove' bindtouchend='ontouchend'>
+                <view id='{{item.id}}'  data-noteid="{{item.noteId}}" data-content="{{item.content}}" class='msg' animation='{{item.animation}}'  bindtap="editNotebtn" bindtouchstart='ontouchstart' bindtouchmove='ontouchmove' bindtouchend='ontouchend'>
                     <!-- 计划内容 -->
-                    <view id="{{item.id}}" data-noteid="{{item.noteId}}" data-content="{{item.content}}"
-                          class="note_contents" bindtap="editNotebtn">{{item.content}}</view>
+                    <view id="{{item.id}}"
+                          class="note_contents">{{item.content}}</view>
                     <!-- 计划时间 -->
                     <view class="msg-text">{{index + 1}}、{{item.updateTime}}
                         <!-- 置顶/收藏按钮 -->
