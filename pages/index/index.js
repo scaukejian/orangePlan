@@ -146,7 +146,11 @@ Page({
                         that.setData({
                             hasMoreData:false
                         })
-                        scanDisplay = "";
+                        if (page > 1) {
+                            scanDisplay = "";
+                        } else {
+                            scanDisplay = 'display:none';
+                        }
                     } else {
                         that.setData({
                             hasMoreData:true
@@ -276,10 +280,12 @@ Page({
         page = 1;
         that.data.msgList.splice(0, that.data.msgList.length);//清空数组
         that.setData({msgList: that.data.msgList, show:false});
+        console.log("--------1--------"+canRefresh);
         that.getNoteData(currentFolderId, searchInputInfo);
     },
     getNoteData: function (folderId, searchContent) {//定义函数名称
         canRefresh = false;
+        console.log("--------2--------"+canRefresh);
         var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
         wx.request({
             url: 'https://hellogood.top/hellogood_api/note/getNoteList.do',//请求地址
@@ -371,14 +377,18 @@ Page({
                             that.setData({
                                 hasMoreData:false
                             })
-                            scanDisplay = "";
+                            console.log("page"+page);
+                            if (page > 1) {
+                                scanDisplay = "";
+                            } else {
+                                scanDisplay = 'display:none';
+                            }
                         } else {
                             that.setData({
                                 hasMoreData:true
                             })
                             page = page + 1;
                         }
-                        canRefresh = true;
                     } else {
                         that.setData({
                             show: false,
@@ -398,6 +408,8 @@ Page({
                         app.alertBox('服务器崩溃')
                     }
                 }
+                canRefresh = true;
+                console.log("--------3--------"+canRefresh);
             },
             fail: function (err) {
                 console.log(err);
@@ -589,6 +601,7 @@ Page({
         console.log(inputinfo);
     },
     click_ok: function (e) {
+        console.log("------5------"+canRefresh);
         if (!canRefresh) return;
         var that = this;  // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
         var id = e.currentTarget.id;

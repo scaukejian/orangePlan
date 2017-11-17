@@ -83,9 +83,9 @@
                     </view>
                 </view>
             </view>
-            <view  style="text-align: center;font-size:14px;margin: 3px auto;color:#10aeff;{{scanDisplay}}">
+            <!--<view  style="text-align: center;font-size:14px;margin: 3px auto;color:#10aeff;{{scanDisplay}}">
                 看完计划咯哟~
-            </view>
+            </view>-->
         </scroll-view>
     </view>
     <view wx:else style="text-align: center;margin-top: 50%;">
