@@ -11,6 +11,8 @@ var mini = 1;
 var page = 1;
 var pageSize = 10;
 var total = 0;
+var canRefresh = true;
+var scanDisplay = 'display:none';
 Page({
     data: {
         userId: 0,
@@ -40,7 +42,8 @@ Page({
         height: 0,
         scrollY: true,
         noteTip: '拼命加载中...',
-        scrollTop : 0
+        scrollTop : 0,
+        hasMoreData:true
     },
     swipeCheckX: 35, //激活检测滑动的阈值
     swipeCheckState: 0, //0未激活 1激活
@@ -86,6 +89,7 @@ Page({
                     currentFolderId = that.data.folderList[0].id;
                     currentFolderIndex = 0;
                 }
+                canRefresh = false;
                 total = that.data.noteTotal;
                 if (that.data.noteList != null && that.data.noteList.length > 0) {
                     that.setData({
@@ -103,6 +107,7 @@ Page({
                         height = windowHeight - 31;
                     }
                     that.data.msgList.splice(0, that.data.msgList.length);//清空数组
+                    that.setData({msgList: that.data.msgList, show:false});
                     for (var i = 0; i < tempList.length; i++) {
                         var note = tempList[i];
                         var msg = {};
@@ -137,6 +142,18 @@ Page({
                         that.data.msgList.push(msg);
                     }
                     that.setData({msgList: that.data.msgList, height: height});
+                    if (that.data.noteList.length < pageSize) {
+                        that.setData({
+                            hasMoreData:false
+                        })
+                        scanDisplay = "";
+                    } else {
+                        that.setData({
+                            hasMoreData:true
+                        })
+                        page = page + 1;
+                    }
+                    canRefresh = true;
                 } else {
                     that.setData({
                         show: false,
@@ -157,28 +174,28 @@ Page({
         }
     },
     onPullDownRefresh: function () {
+        if (!canRefresh) return;
         var that = this;
         that.setData({
-            noteList : [],
             scrollTop : 0
         });
         page = 1;
         that.data.msgList.splice(0, that.data.msgList.length);//清空数组
+        that.setData({msgList: that.data.msgList, show:false});
         that.getNoteData(currentFolderId, searchInputInfo);
     },
     // 上拉加载数据 上拉动态效果不明显有待改善
     pullUpLoad: function() {
+        if (!canRefresh) return;
         var that = this;
         console.log("total:"+total);
         console.log("page:"+page);
         console.log("pageSize:"+pageSize);
-        if (total > (page * pageSize)) {
-            page = page + 1;
-            console.log("page5:"+page);
+        if (that.data.hasMoreData) {
             that.getNoteData(currentFolderId, searchInputInfo);
         } else {
-            console.log("page6:"+page);
-           /* wx.showToast({
+            /*console.log("page6:"+page);
+           wx.showToast({
                 title: '看完计划了哟',
                 duration: 500
             })*/
@@ -258,9 +275,11 @@ Page({
         currentFolderIndex = e.detail.value;
         page = 1;
         that.data.msgList.splice(0, that.data.msgList.length);//清空数组
+        that.setData({msgList: that.data.msgList, show:false});
         that.getNoteData(currentFolderId, searchInputInfo);
     },
     getNoteData: function (folderId, searchContent) {//定义函数名称
+        canRefresh = false;
         var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
         wx.request({
             url: 'https://hellogood.top/hellogood_api/note/getNoteList.do',//请求地址
@@ -295,6 +314,7 @@ Page({
                         console.log("2、tempList:" + tempList.length);
                         that.pixelRatio = app.globalData.deviceInfo.pixelRatio;
                         var windowHeight = app.globalData.deviceInfo.windowHeight;
+                        var windowWidth = app.globalData.deviceInfo.windowWidth;
                         var brand = app.globalData.deviceInfo.brand;
                         var height;
                         if (brand.indexOf("Meizu") != -1) {
@@ -303,6 +323,16 @@ Page({
                             height = windowHeight - 31;
                         }
                         //that.data.msgList.splice(0, that.data.msgList.length);//清空数组（切换计划的时候清空缓存数据）
+                        var increaseNum1 = 4;
+                        var increaseNum2 = 7;
+                        if (windowWidth < 375) {
+                            increaseNum1 = 0;
+                            increaseNum2 = 0;
+                            if (windowWidth >= 360) {
+                                increaseNum1 = 2;
+                                increaseNum2 = 5;
+                            }
+                        }
                         for (var i = 0; i < tempList.length; i++) {
                             var note = tempList[i];
                             var msg = {};
@@ -313,20 +343,20 @@ Page({
                             msg.display = note.display;
                             msg.finish = note.finish;
                             msg.updateTime = utils.formatTime(new Date(note.updateTime));
-                            msg.msg_item_height = 58;
-                            msg.msg_height = 58;
-                            msg.msg_menu_height = 57;
-                            msg.msg_menu_line_height = 58;
+                            msg.msg_item_height = 58+increaseNum1;
+                            msg.msg_height = 58+increaseNum1;
+                            msg.msg_menu_height = 57+increaseNum1;
+                            msg.msg_menu_line_height = 58+increaseNum1;
                             var length = utils.strlen(note.content);
-                            if (note.content != null && length > 38) {
-                                var rowNum = Math.floor(length / 38);
-                                if (length % 38 == 0) {
+                            if (note.content != null && length > (37 + increaseNum2)) {
+                                var rowNum = Math.floor(length /  (37 + increaseNum2));
+                                if (length % (37 + increaseNum2) == 0) {
                                     rowNum = rowNum - 1;
                                 }
-                                msg.msg_item_height = msg.msg_item_height + (24 * rowNum);
-                                msg.msg_height = msg.msg_height + (24 * rowNum);
-                                msg.msg_menu_height = msg.msg_menu_height + (24 * rowNum);
-                                msg.msg_menu_line_height = msg.msg_menu_line_height + (24 * rowNum);
+                                msg.msg_item_height = msg.msg_item_height + ((24+increaseNum1) * rowNum);
+                                msg.msg_height = msg.msg_height + ((24+increaseNum1) * rowNum);
+                                msg.msg_menu_height = msg.msg_menu_height + ((24+increaseNum1) * rowNum);
+                                msg.msg_menu_line_height = msg.msg_menu_line_height + ((24+increaseNum1) * rowNum);
                             }
                             if (note.top != 1) {
                                 msg.bookmark_display = "none";
@@ -337,6 +367,18 @@ Page({
                             that.data.msgList.push(msg);
                         }
                         that.setData({msgList: that.data.msgList, height: height});
+                        if (that.data.noteList.length < pageSize) {
+                            that.setData({
+                                hasMoreData:false
+                            })
+                            scanDisplay = "";
+                        } else {
+                            that.setData({
+                                hasMoreData:true
+                            })
+                            page = page + 1;
+                        }
+                        canRefresh = true;
                     } else {
                         that.setData({
                             show: false,
@@ -369,6 +411,7 @@ Page({
         });
     },
     changeFinish: function (e) {
+        if (!canRefresh) return;
         var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
         var noteId = e.currentTarget.dataset.noteid;
         var finish = 1 - e.currentTarget.dataset.finish;
@@ -390,6 +433,7 @@ Page({
                     that.translateXMsgItem(e.currentTarget.id, 0, 0);
                     page = 1;
                     that.data.msgList.splice(0, that.data.msgList.length);//清空数组
+                    that.setData({msgList: that.data.msgList, show:false});
                     that.getNoteData(currentFolderId, searchInputInfo);
                     if (finish == 1) {
                         wx.showToast({
@@ -428,6 +472,7 @@ Page({
         });
     },
     changeTop: function (e) {
+        if (!canRefresh) return;
         var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
         var noteId = e.currentTarget.dataset.noteid;
         var top = 1 - e.currentTarget.dataset.top;
@@ -446,6 +491,7 @@ Page({
                     that.translateXMsgItem(e.currentTarget.id, 0, 0);
                     page = 1;
                     that.data.msgList.splice(0, that.data.msgList.length);//清空数组
+                    that.setData({msgList: that.data.msgList, show:false});
                     that.getNoteData(currentFolderId, searchInputInfo);
                     if (top == 1) {
                         wx.showToast({
@@ -543,6 +589,7 @@ Page({
         console.log(inputinfo);
     },
     click_ok: function (e) {
+        if (!canRefresh) return;
         var that = this;  // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
         var id = e.currentTarget.id;
         var url = '';
@@ -578,6 +625,9 @@ Page({
                 //如果在sucess直接写this就变成了wx.request()的this了.必须为getdata函数的this,不然无法重置调用函数
                 var result = res.data
                 if (result.status == 'success') {
+                    page = 1;
+                    that.data.msgList.splice(0, that.data.msgList.length);//清空数组
+                    that.setData({msgList: that.data.msgList, show:false});
                     that.getNoteData(currentFolderId, searchInputInfo);
                     wx.showToast({
                         title: title,
@@ -661,6 +711,7 @@ Page({
         }
     },
     setRecycle: function (noteId, display, e) {
+        if (!canRefresh) return;
         var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
         wx.request({
             url: 'https://hellogood.top/hellogood_api/note/setRecycle.do',//请求地址
@@ -677,6 +728,7 @@ Page({
                     that.translateXMsgItem(e.currentTarget.id, 0, 0);
                     page = 1;
                     that.data.msgList.splice(0, that.data.msgList.length);//清空数组
+                    that.setData({msgList: that.data.msgList, show:false});
                     that.getNoteData(currentFolderId, searchInputInfo);
                     if (display == 0) {
                         wx.showToast({
@@ -728,6 +780,10 @@ Page({
             searchShow: false
         })
         searchInputInfo = "";
+        page = 1;
+        that.data.msgList.splice(0, that.data.msgList.length);//清空数组
+        that.setData({msgList: that.data.msgList, show:false});
+        that.getNoteData(currentFolderId, searchInputInfo);
     },
     searchInput: function (e) {
         searchInputInfo = e.detail.value;
@@ -740,6 +796,9 @@ Page({
             searchShow: false
         })
         if (searchInputInfo != null) {
+            page = 1;
+            that.data.msgList.splice(0, that.data.msgList.length);//清空数组
+            that.setData({msgList: that.data.msgList, show:false});
             that.getNoteData(currentFolderId, searchInputInfo);
             searchInputInfo = "";
         }
@@ -905,6 +964,7 @@ Page({
     },
     // 定位数据
     scroll:function(event){
+        if(!canRefresh) return;
         var that = this;
         that.setData({
             scrollTop : event.detail.scrollTop
