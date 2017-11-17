@@ -7,8 +7,7 @@ function formatTime(date) {
     var minute = date.getMinutes()
     var second = date.getSeconds()
 
-
-    return [year, month, day].map(formatNumber).join('-') + ' ' + [hour, minute, second].map(formatNumber).join(':')
+    return [year, month, day].map(formatNumber).join('/') + ' ' + [hour, minute, second].map(formatNumber).join(':');
 }
 
 function formatNumber(n) {
@@ -26,8 +25,22 @@ function sleep(time) {
         }
     }
 }
-
+function strlen(str){
+    var len = 0;
+    for (var i=0; i<str.length; i++) {
+        var c = str.charCodeAt(i);
+        //单字节加1
+        if ((c >= 0x0001 && c <= 0x007e) || (0xff60<=c && c<=0xff9f)) {
+            len++;
+        }
+        else {
+            len+=2;
+        }
+    }
+    return len;
+}
 module.exports = {
     formatTime: formatTime,
-    sleep: sleep
+    sleep: sleep,
+    strlen:strlen
 }

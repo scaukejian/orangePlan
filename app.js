@@ -29,13 +29,6 @@ App({
                         //...
                         wx.getUserInfo({
                             success: function (res) {
-                                //3.请求自己的服务器，解密用户信息 获取unionId等加密信息
-                                wx.showToast({
-                                    title: '拼命加载中...',
-                                    icon: 'loading',
-                                    mask: true,
-                                    duration: 10000
-                                })
                                 wx.request({
                                     url: ROOT + '/mina/isExist.do',//自己的服务接口地址
                                     method: 'POST',
@@ -44,7 +37,6 @@ App({
                                     },
                                     data: {encryptedData: res.encryptedData, iv: res.iv, code: code},
                                     success: function (data) {
-                                        wx.hideToast()
                                         //4.解密成功后 获取自己服务器返回的结果
                                         if (data.data.status == "success") {
                                             wx.setStorageSync('openId', data.data.data.openId);

@@ -202,6 +202,10 @@
 .search-icon {
   width:10%;
 }
+.back-icon {
+  width:10%;
+  text-align: center;
+}
 .navigate-picker{
   width:80%;
   text-align: center;
@@ -235,51 +239,49 @@
   font-size: 18px;
  }
 
-
 .msg-list {
 }
 
 .msg-item {
   width: 100%;
-  height: 150rpx;
   border-bottom: 1rpx solid rgb(233, 233, 233);
   position: relative;
   left:0;
   top:0;
+  overflow: auto;
 }
 
 .msg {
   position: absolute;
   width: 100%;
-  height: 150rpx;
   left:0;
   top:0;
   z-index: 100;
   background-color: #FFF;
+  overflow: auto;
 }
 
 .note_contents {
   position: absolute;
-  left: 10rpx;
-  top: 20rpx;
-  padding-left: 6px;
-  padding-right: 6px;
+  top: 7px;
+  padding-left: 8px;
+  padding-right: 8px;
+  word-break: break-all;
+  line-height:150%;
 }
 
 .msg-text {
   position: absolute;
-  left: 10rpx;
-  bottom: 20rpx;
-  font-size: 12px;
+  bottom: 7px;
+  font-size: 14px;
   color: rgb(127, 127, 127);
-  padding-left: 6px;
-  padding-right: 6px;
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
 .msg-menu {
   position: absolute;
   width: 100%;
-  height: 150rpx;
   left:0;
   top:0;
   z-index: 0;
@@ -287,25 +289,41 @@
 
 .menu-delete {
   position: absolute;
-  width: 150rpx;
-  height: 148rpx;
+  width: 130rpx;
   top:0rpx;
-  right: 180rpx;
+  right: 350rpx;
   background-color: rgb(255, 58, 50);
   color:#FFF;
   text-align: center;
-  line-height:150rpx;
+}
+
+.menu-Top {
+  position: absolute;
+  width: 175rpx;
+  top:0rpx;
+  right: 175rpx;
+  background-color: green;
+  color:#FFF;
+  text-align: center;
 }
 
 .menu-finish {
   position: absolute;
-  width: 180rpx;
-  height: 148rpx;
+  width: 175rpx;
   top:0rpx;
   right: 0;
   background-color: #10aeff;
   color:#FFF;
   text-align: center;
-  line-height:150rpx;
 }
+.bookmark {
+  width: 13px;
+  height:13px;
+  margin-right: 5px;
+}
+.tick {
+  width: 15px;
+  height:15px;
+}
+
 

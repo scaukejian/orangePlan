@@ -7,11 +7,16 @@ var searchInputInfo = "";
 var currentFolderId = 0;
 var currentFolderIndex = 0;
 var mini = 1;
+// 当前页数
+var page = 1;
+var pageSize = 10;
+var total = 0;
 Page({
     data: {
         userId: 0,
         folderList: [],
         noteList: [],
+        noteTotal:0,
         animationData: "",
         showModalStatus: false,
         noteContent: "",
@@ -25,26 +30,28 @@ Page({
         folderListSize: 0,
         folderNameList: [],
         beforeFolderList: [],
-        searchShow:false,
-        folderShow:true,
-        index:0,
+        searchShow: false,
+        folderShow: true,
+        index: 0,
         show: false,
-        beforeFolderName:'',
-        height_textarea:'',
-        msgList:[],
-        height:0,
-        scrollY:true
+        beforeFolderName: '',
+        height_textarea: '',
+        msgList: [],
+        height: 0,
+        scrollY: true,
+        noteTip: '拼命加载中...',
+        scrollTop : 0
     },
-    swipeCheckX:35, //激活检测滑动的阈值
-    swipeCheckState:0, //0未激活 1激活
-    maxMoveLeft:185, //消息列表项最大左滑距离
-    correctMoveLeft:175, //显示菜单时的左滑距离
+    swipeCheckX: 35, //激活检测滑动的阈值
+    swipeCheckState: 0, //0未激活 1激活
+    maxMoveLeft: 270, //消息列表项最大左滑距离
+    correctMoveLeft: 265, //显示菜单时的左滑距离
     thresholdMoveLeft: 75,//左滑阈值，超过则显示菜单
-    lastShowMsgId:'', //记录上次显示菜单的消息id
-    moveX:0,  //记录平移距离
-    showState:0, //0 未显示菜单 1显示菜单
-    touchStartState:0, // 开始触摸时的状态 0 未显示菜单 1 显示菜单
-    swipeDirection:0, //是否触发水平滑动 0:未触发 1:触发水平滑动 2:触发垂直滑动
+    lastShowMsgId: '', //记录上次显示菜单的消息id
+    moveX: 0,  //记录平移距离
+    showState: 0, //0 未显示菜单 1显示菜单
+    touchStartState: 0, // 开始触摸时的状态 0 未显示菜单 1 显示菜单
+    swipeDirection: 0, //是否触发水平滑动 0:未触发 1:触发水平滑动 2:触发垂直滑动
     //事件处理函数
     bindViewTap: function () {
         wx.navigateTo({
@@ -61,48 +68,86 @@ Page({
                     folderList: userInfoData.folderList,
                     noteList: userInfoData.noteList,
                     folderNameList: userInfoData.folderNameList,
-                    beforeFolderList: userInfoData.beforeFolderList
+                    beforeFolderList: userInfoData.beforeFolderList,
+                    noteTotal: userInfoData.total
                 });
                 that.setData({
                     beforeFolderName: that.data.beforeFolderList[0]
                 });
+                if (that.data.folderList.length <= 0) {
+                    wx.showToast({
+                        title: '网络异常，请刷新重试',
+                        icon: 'loading',
+                        duration: 5000
+                    })
+                    return;
+                }
                 if (currentFolderId == null || currentFolderId <= 0) {
                     currentFolderId = that.data.folderList[0].id;
                     currentFolderIndex = 0;
                 }
+                total = that.data.noteTotal;
                 if (that.data.noteList != null && that.data.noteList.length > 0) {
                     that.setData({
                         show: true
                     });
+                    //格式化
+                    var tempList = that.data.noteList;
                     that.pixelRatio = app.globalData.deviceInfo.pixelRatio;
                     var windowHeight = app.globalData.deviceInfo.windowHeight;
                     var brand = app.globalData.deviceInfo.brand;
                     var height;
                     if (brand.indexOf("Meizu") != -1) {
-                        height = windowHeight -79;
+                        height = windowHeight - 79;
                     } else {
-                        height = windowHeight -31;
+                        height = windowHeight - 31;
                     }
-                    var tempList = that.data.noteList;
-                    console.log("1、tempList:"+tempList.length);
+                    that.data.msgList.splice(0, that.data.msgList.length);//清空数组
                     for (var i = 0; i < tempList.length; i++) {
                         var note = tempList[i];
                         var msg = {};
-                        msg.id = 'id-' + i+1;
+                        msg.id = 'id-' + (i + 1 + (page -1) * pageSize);
                         msg.noteId = note.id;
                         msg.content = note.content;
                         msg.top = note.top;
                         msg.display = note.display;
+                        msg.finish = note.finish;
                         msg.updateTime = utils.formatTime(new Date(note.updateTime));
+                        msg.msg_item_height = 58;
+                        msg.msg_height = 58;
+                        msg.msg_menu_height = 57;
+                        msg.msg_menu_line_height = 58;
+                        var length = utils.strlen(note.content);
+                        if (note.content != null && length > 38) {
+                            var rowNum = Math.floor(length / 38);
+                            if (length % 38 == 0) {
+                                rowNum = rowNum - 1;
+                            }
+                            msg.msg_item_height = msg.msg_item_height + (24 * rowNum);
+                            msg.msg_height = msg.msg_height + (24 * rowNum);
+                            msg.msg_menu_height = msg.msg_menu_height + (24 * rowNum);
+                            msg.msg_menu_line_height = msg.msg_menu_line_height + (24 * rowNum);
+                        }
+                        if (note.top != 1) {
+                            msg.bookmark_display = "none";
+                        }
+                        if (note.finish != 1) {
+                            msg.tick_display = "none";
+                        }
                         that.data.msgList.push(msg);
                     }
-                    that.setData({msgList:that.data.msgList, height:height});
+                    that.setData({msgList: that.data.msgList, height: height});
+                } else {
+                    that.setData({
+                        show: false,
+                        noteTip: "暂无计划"
+                    });
                 }
             })
         } else {
             that.setData({
                 userId: wx.getStorageSync('userId'),
-                folderNameList: wx.getStorageSync('folderNameList'),
+                folderNameList: wx.getStorageSync('folderNameList'),//修改文件夹的时候需要重置本地数据
                 beforeFolderList: wx.getStorageSync('beforeFolderList')
             });
             that.setData({
@@ -112,7 +157,32 @@ Page({
         }
     },
     onPullDownRefresh: function () {
-        this.getNoteData(currentFolderId, searchInputInfo);
+        var that = this;
+        that.setData({
+            noteList : [],
+            scrollTop : 0
+        });
+        page = 1;
+        that.data.msgList.splice(0, that.data.msgList.length);//清空数组
+        that.getNoteData(currentFolderId, searchInputInfo);
+    },
+    // 上拉加载数据 上拉动态效果不明显有待改善
+    pullUpLoad: function() {
+        var that = this;
+        console.log("total:"+total);
+        console.log("page:"+page);
+        console.log("pageSize:"+pageSize);
+        if (total > (page * pageSize)) {
+            page = page + 1;
+            console.log("page5:"+page);
+            that.getNoteData(currentFolderId, searchInputInfo);
+        } else {
+            console.log("page6:"+page);
+           /* wx.showToast({
+                title: '看完计划了哟',
+                duration: 500
+            })*/
+        }
     },
     getFolderData: function () {//定义函数名称
         var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
@@ -120,7 +190,7 @@ Page({
             url: 'https://hellogood.top/hellogood_api/folder/getFolderList.do',//请求地址
             data: {//发送给后台的数据
                 page: 1,
-                pageSize: 10,
+                pageSize: 15,
                 userId: that.data.userId
             },
             method: "POST",//get为默认方法/POST
@@ -132,12 +202,19 @@ Page({
                         folderList: res.data.dataList,
                         folderListSize: res.data.dataList.length
                     });
+                    if (that.data.folderList.length <= 0) {
+                        wx.showToast({
+                            title: '网络异常，请刷新重试',
+                            icon: 'loading',
+                            duration: 5000
+                        })
+                        return;
+                    }
 
                     if (currentFolderId == null || currentFolderId <= 0) {
                         currentFolderId = that.data.folderList[0].id;
                         currentFolderIndex = 0;
                     }
-
                     that.getNoteData(currentFolderId, searchInputInfo);
                 } else if (result.status == 'failed') {
                     if (result.message) {
@@ -161,15 +238,26 @@ Page({
             }//请求完成后执行的函数
         });
     },
-    bindPickerChange: function(e) {
+    bindPickerChange: function (e) {
         var that = this;
         that.setData({
             index: e.detail.value,
             beforeFolderName: that.data.beforeFolderList[e.detail.value]
         })
+        if (e.detail.value <= 3) {
+            that.setData({
+                beforeFolderName: that.data.beforeFolderList[e.detail.value]
+            })
+        } else {
+            that.setData({
+                beforeFolderName: ''
+            })
+        }
         var folderId = that.data.folderList[that.data.index].id;
         currentFolderId = folderId;
         currentFolderIndex = e.detail.value;
+        page = 1;
+        that.data.msgList.splice(0, that.data.msgList.length);//清空数组
         that.getNoteData(currentFolderId, searchInputInfo);
     },
     getNoteData: function (folderId, searchContent) {//定义函数名称
@@ -181,8 +269,8 @@ Page({
                 folderId: folderId,
                 userId: that.data.userId,
                 content: searchContent,
-                page: 1,
-                pageSize: 10,
+                page: page,
+                pageSize: pageSize,
                 mini: mini
             },
             method: "POST",//get为默认方法/POST
@@ -197,43 +285,64 @@ Page({
                         that.setData({
                             show: true
                         });
+                        total = res.data.total;
+                        console.log("total:"+total);
+                        console.log("page1:"+page);
+
+                        console.log("page3:"+page);
+                        //格式化
+                        var tempList = that.data.noteList;
+                        console.log("2、tempList:" + tempList.length);
+                        that.pixelRatio = app.globalData.deviceInfo.pixelRatio;
+                        var windowHeight = app.globalData.deviceInfo.windowHeight;
+                        var brand = app.globalData.deviceInfo.brand;
+                        var height;
+                        if (brand.indexOf("Meizu") != -1) {
+                            height = windowHeight - 79;
+                        } else {
+                            height = windowHeight - 31;
+                        }
+                        //that.data.msgList.splice(0, that.data.msgList.length);//清空数组（切换计划的时候清空缓存数据）
+                        for (var i = 0; i < tempList.length; i++) {
+                            var note = tempList[i];
+                            var msg = {};
+                            msg.id = 'id-' + (i + 1 + (page -1) * pageSize);
+                            msg.noteId = note.id;
+                            msg.content = note.content;
+                            msg.top = note.top;
+                            msg.display = note.display;
+                            msg.finish = note.finish;
+                            msg.updateTime = utils.formatTime(new Date(note.updateTime));
+                            msg.msg_item_height = 58;
+                            msg.msg_height = 58;
+                            msg.msg_menu_height = 57;
+                            msg.msg_menu_line_height = 58;
+                            var length = utils.strlen(note.content);
+                            if (note.content != null && length > 38) {
+                                var rowNum = Math.floor(length / 38);
+                                if (length % 38 == 0) {
+                                    rowNum = rowNum - 1;
+                                }
+                                msg.msg_item_height = msg.msg_item_height + (24 * rowNum);
+                                msg.msg_height = msg.msg_height + (24 * rowNum);
+                                msg.msg_menu_height = msg.msg_menu_height + (24 * rowNum);
+                                msg.msg_menu_line_height = msg.msg_menu_line_height + (24 * rowNum);
+                            }
+                            if (note.top != 1) {
+                                msg.bookmark_display = "none";
+                            }
+                            if (note.finish != 1) {
+                                msg.tick_display = "none";
+                            }
+                            that.data.msgList.push(msg);
+                        }
+                        that.setData({msgList: that.data.msgList, height: height});
                     } else {
                         that.setData({
-                            show: false
+                            show: false,
+                            noteTip: "暂无计划"
                         });
                     }
-
-                    //格式化
-                    var tempList = that.data.noteList;
-                    console.log("2、tempList:"+tempList.length);
-                    for (var i = 0; i < tempList.length; i++) {
-                        tempList[i].updateTime = utils.formatTime(new Date(tempList[i].updateTime));
-                    }
-                    that.pixelRatio = app.globalData.deviceInfo.pixelRatio;
-                    var windowHeight = app.globalData.deviceInfo.windowHeight;
-                    var brand = app.globalData.deviceInfo.brand;
-                    var height;
-                    if (brand.indexOf("Meizu") != -1) {
-                        height = windowHeight - 79;
-                    } else {
-                        height = windowHeight - 31;
-                    }
-                    that.data.msgList.splice(0,that.data.msgList.length);//清空数组
-                    for (var i = 0; i < tempList.length; i++) {
-                        var note = tempList[i];
-                        var msg = {};
-                        msg.id = 'id-' + i+1;
-                        msg.noteId = note.id;
-                        msg.content = note.content;
-                        msg.top = note.top;
-                        msg.display = note.display;
-                        msg.updateTime = utils.formatTime(new Date(note.updateTime));
-                        that.data.msgList.push(msg);
-                    }
-                    that.setData({msgList:that.data.msgList, height:height});
-                    /*that.setData({
-                        noteList: tempList
-                    })*/
                 } else if (result.status == 'failed') {
                     if (result.message) {
                         app.alertBox(result.message)
@@ -252,7 +361,7 @@ Page({
                 console.log(err);
                 showRequestInfo();
             },
-            complete: function() {
+            complete: function () {
                 // complete
                 wx.hideNavigationBarLoading() //完成停止加载
                 wx.stopPullDownRefresh() //停止下拉刷新
@@ -261,8 +370,11 @@ Page({
     },
     changeFinish: function (e) {
         var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
-        var noteId = e.currentTarget.id;
+        var noteId = e.currentTarget.dataset.noteid;
         var finish = 1 - e.currentTarget.dataset.finish;
+        console.log(e);
+        console.log(noteId);
+        console.log(finish);
         wx.request({
             url: 'https://hellogood.top/hellogood_api/note/setFinish.do',//请求地址
             data: {//发送给后台的数据
@@ -275,6 +387,9 @@ Page({
                 //如果在sucess直接写this就变成了wx.request()的this了.必须为getdata函数的this,不然无法重置调用函数
                 var result = res.data
                 if (result.status == 'success') {
+                    that.translateXMsgItem(e.currentTarget.id, 0, 0);
+                    page = 1;
+                    that.data.msgList.splice(0, that.data.msgList.length);//清空数组
                     that.getNoteData(currentFolderId, searchInputInfo);
                     if (finish == 1) {
                         wx.showToast({
@@ -329,6 +444,8 @@ Page({
                 var result = res.data
                 if (result.status == 'success') {
                     that.translateXMsgItem(e.currentTarget.id, 0, 0);
+                    page = 1;
+                    that.data.msgList.splice(0, that.data.msgList.length);//清空数组
                     that.getNoteData(currentFolderId, searchInputInfo);
                     if (top == 1) {
                         wx.showToast({
@@ -427,10 +544,6 @@ Page({
     },
     click_ok: function (e) {
         var that = this;  // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
-        if (inputinfo == '') {
-            app.alertBox('计划内容不能为空!');
-            return;
-        }
         var id = e.currentTarget.id;
         var url = '';
         var title = '';
@@ -441,9 +554,17 @@ Page({
             mini: mini
         }
         if (id == null || id == 0) {
+            if (inputinfo == '') {
+                app.alertBox('计划内容不能为空!');
+                return;
+            }
             url = 'https://hellogood.top/hellogood_api/note/add.do';
             title = '已添加';
         } else {
+            if (inputinfo == '') {
+                that.hideModal();
+                return;
+            }
             url = 'https://hellogood.top/hellogood_api/note/update.do';
             sentData.id = id;
             title = '已更新';
@@ -554,6 +675,8 @@ Page({
                 var result = res.data
                 if (result.status == 'success') {
                     that.translateXMsgItem(e.currentTarget.id, 0, 0);
+                    page = 1;
+                    that.data.msgList.splice(0, that.data.msgList.length);//清空数组
                     that.getNoteData(currentFolderId, searchInputInfo);
                     if (display == 0) {
                         wx.showToast({
@@ -591,81 +714,20 @@ Page({
             }//请求完成后执行的函数
         });
     },
-
-
-    handletouchmove: function (event) {
-        let currentX = event.touches[0].pageX
-        let currentY = event.touches[0].pageY
-        let tx = currentX - this.data.lastX
-        let ty = currentY - this.data.lastY
-        let text = ""
-        //左右方向滑动
-        if (Math.abs(tx) > Math.abs(ty)) {
-            if (tx < 0) {
-                text = "向左滑动"
-                this.data.currentGesture = 1
-            }
-            else if (tx > 0) {
-                text = "向右滑动"
-                this.data.currentGesture = 2
-            }
-        }
-        //上下方向滑动
-        else {
-            if (ty < 0) {
-                text = "向上滑动"
-                this.data.currentGesture = 3
-            }
-            else if (ty > 0) {
-                text = "向下滑动"
-                this.data.currentGesture = 4
-            }
-        }
-        //将当前坐标进行保存以进行下一次计算
-        this.data.lastX = currentX
-        this.data.lastY = currentY
-        this.setData({
-            text: text,
-        });
-
-    },
-
-    handletouchtart: function (event) {
-        this.data.lastX = event.touches[0].pageX
-        this.data.lastY = event.touches[0].pageY
-    },
-    handletouchend: function (event) {
-        var currentGesture = this.data.currentGesture;
-        var text = this.data.text;
-        if (currentGesture == 1) { //向左滑动
-            if (currentFolderIndex < this.data.folderListSize - 1) {
-                currentFolderIndex += 1;
-                this.goNoteListMove(currentFolderIndex);
-            }
-
-        } else if (currentGesture == 2) { //向右滑动
-            if (currentFolderIndex > 0) {
-                currentFolderIndex -= 1;
-                this.goNoteListMove(currentFolderIndex);
-            }
-        }
-        this.data.currentGesture = 0;
-    },
-    goNoteListMove: function (currentFolderIndex) {
-        var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
-        var folderId = that.data.folderList[currentFolderIndex].id;
-        var folderIndex = currentFolderIndex;
-        currentFolderId = folderId;
-        currentFolderIndex = folderIndex;
-        that.getNoteData(currentFolderId, "");
-    },
-
     searchIcon: function () {
         var that = this;
         that.setData({
             folderShow: false,
             searchShow: true
         })
+    },
+    backIcon: function () {
+        var that = this;
+        that.setData({
+            folderShow: true,
+            searchShow: false
+        })
+        searchInputInfo = "";
     },
     searchInput: function (e) {
         searchInputInfo = e.detail.value;
@@ -682,7 +744,7 @@ Page({
             searchInputInfo = "";
         }
     },
-    ontouchstart: function(e) {
+    ontouchstart: function (e) {
         if (this.showState === 1) {
             this.touchStartState = 1;
             this.showState = 0;
@@ -699,7 +761,7 @@ Page({
         this.lastMoveTime = e.timeStamp;
     },
 
-    ontouchmove: function(e) {
+    ontouchmove: function (e) {
         if (this.swipeCheckState === 0) {
             return;
         }
@@ -725,7 +787,7 @@ Page({
             //触发水平操作
             if (Math.abs(moveX) > 4) {
                 this.swipeDirection = 1;
-                this.setData({scrollY:false});
+                this.setData({scrollY: false});
             }
             else {
                 return;
@@ -749,13 +811,13 @@ Page({
         this.moveX = moveX;
         this.translateXMsgItem(e.currentTarget.id, moveX, 0);
     },
-    ontouchend: function(e) {
+    ontouchend: function (e) {
         this.swipeCheckState = 0;
         var swipeDirection = this.swipeDirection;
         this.swipeDirection = 0;
         if (this.touchStartState === 1) {
             this.touchStartState = 0;
-            this.setData({scrollY:true});
+            this.setData({scrollY: true});
             return;
         }
         //垂直滚动，忽略
@@ -765,7 +827,7 @@ Page({
         if (this.moveX === 0) {
             this.showState = 0;
             //不显示菜单状态下,激活垂直滚动
-            this.setData({scrollY:true});
+            this.setData({scrollY: true});
             return;
         }
         if (this.moveX === this.correctMoveLeft) {
@@ -782,24 +844,24 @@ Page({
             this.moveX = 0;
             this.showState = 0;
             //不显示菜单,激活垂直滚动
-            this.setData({scrollY:true});
+            this.setData({scrollY: true});
         }
         this.translateXMsgItem(e.currentTarget.id, this.moveX, 200);
         //this.translateXMsgItem(e.currentTarget.id, 0, 0);
     },
-    onDeleteMsgTap: function(e) {
+    onDeleteMsgTap: function (e) {
         this.deleteMsgItem(e);
     },
-    onDeleteMsgLongtap: function(e) {
+    onDeleteMsgLongtap: function (e) {
         console.log(e);
     },
-    onMarkMsgTap: function(e) {
+    onMarkMsgTap: function (e) {
         console.log(e);
     },
-    onMarkMsgLongtap: function(e) {
+    onMarkMsgLongtap: function (e) {
         console.log(e);
     },
-    getItemIndex: function(id) {
+    getItemIndex: function (id) {
         var msgList = this.data.msgList;
         for (var i = 0; i < msgList.length; i++) {
             if (msgList[i].id === id) {
@@ -808,7 +870,7 @@ Page({
         }
         return -1;
     },
-    deleteMsgItem: function(e) {
+    deleteMsgItem: function (e) {
         var that = this;
         var noteId = e.currentTarget.dataset.noteid;
         var display = 1 - e.currentTarget.dataset.display;
@@ -822,23 +884,30 @@ Page({
             }
         })
     },
-    translateXMsgItem: function(id, x, duration) {
-        var animation = wx.createAnimation({duration:duration});
+    translateXMsgItem: function (id, x, duration) {
+        var animation = wx.createAnimation({duration: duration});
         animation.translateX(x).step();
         this.animationMsgItem(id, animation);
     },
-    animationMsgItem: function(id, animation) {
+    animationMsgItem: function (id, animation) {
         var index = this.getItemIndex(id);
         var param = {};
         var indexString = 'msgList[' + index + '].animation';
         param[indexString] = animation.export();
         this.setData(param);
     },
-    animationMsgWrapItem: function(id, animation) {
+    animationMsgWrapItem: function (id, animation) {
         var index = this.getItemIndex(id);
         var param = {};
         var indexString = 'msgList[' + index + '].wrapAnimation';
         param[indexString] = animation.export();
         this.setData(param);
+    },
+    // 定位数据
+    scroll:function(event){
+        var that = this;
+        that.setData({
+            scrollTop : event.detail.scrollTop
+        });
     }
 })
