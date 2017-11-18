@@ -29,7 +29,6 @@ Page({
         lastY: 0,
         text: "没有滑动",
         currentGesture: 0,
-        folderListSize: 0,
         folderNameList: [],
         beforeFolderList: [],
         searchShow: false,
@@ -43,7 +42,11 @@ Page({
         scrollY: true,
         noteTip: '拼命加载中...',
         scrollTop : 0,
-        hasMoreData:true
+        hasMoreData:true,
+        showWeather:false,
+        showWeatherTip:'',
+        weather:'',
+        code:99
     },
     swipeCheckX: 35, //激活检测滑动的阈值
     swipeCheckState: 0, //0未激活 1激活
@@ -90,7 +93,6 @@ Page({
                     currentFolderIndex = 0;
                 }
                 canRefresh = false;
-                total = that.data.noteTotal;
                 if (that.data.noteList != null && that.data.noteList.length > 0) {
                     that.setData({
                         show: true
@@ -99,6 +101,7 @@ Page({
                     var tempList = that.data.noteList;
                     that.pixelRatio = app.globalData.deviceInfo.pixelRatio;
                     var windowHeight = app.globalData.deviceInfo.windowHeight;
+                    var windowWidth = app.globalData.deviceInfo.windowWidth;
                     var brand = app.globalData.deviceInfo.brand;
                     var height;
                     if (brand.indexOf("Meizu") != -1) {
@@ -106,8 +109,17 @@ Page({
                     } else {
                         height = windowHeight - 31;
                     }
-                    that.data.msgList.splice(0, that.data.msgList.length);//清空数组
-                    that.setData({msgList: that.data.msgList, show:false});
+                    //that.data.msgList.splice(0, that.data.msgList.length);//清空数组（切换计划的时候清空缓存数据）
+                    var increaseNum1 = 4;
+                    var increaseNum2 = 7;
+                    if (windowWidth < 375) {
+                        increaseNum1 = 0;
+                        increaseNum2 = 0;
+                        if (windowWidth >= 360) {
+                            increaseNum1 = 2;
+                            increaseNum2 = 5;
+                        }
+                    }
                     for (var i = 0; i < tempList.length; i++) {
                         var note = tempList[i];
                         var msg = {};
@@ -118,20 +130,20 @@ Page({
                         msg.display = note.display;
                         msg.finish = note.finish;
                         msg.updateTime = utils.formatTime(new Date(note.updateTime));
-                        msg.msg_item_height = 58;
-                        msg.msg_height = 58;
-                        msg.msg_menu_height = 57;
-                        msg.msg_menu_line_height = 58;
+                        msg.msg_item_height = 58+increaseNum1;
+                        msg.msg_height = 58+increaseNum1;
+                        msg.msg_menu_height = 57+increaseNum1;
+                        msg.msg_menu_line_height = 58+increaseNum1;
                         var length = utils.strlen(note.content);
-                        if (note.content != null && length > 38) {
-                            var rowNum = Math.floor(length / 38);
-                            if (length % 38 == 0) {
+                        if (note.content != null && length > (37 + increaseNum2)) {
+                            var rowNum = Math.floor(length /  (37 + increaseNum2));
+                            if (length % (37 + increaseNum2) == 0) {
                                 rowNum = rowNum - 1;
                             }
-                            msg.msg_item_height = msg.msg_item_height + (24 * rowNum);
-                            msg.msg_height = msg.msg_height + (24 * rowNum);
-                            msg.msg_menu_height = msg.msg_menu_height + (24 * rowNum);
-                            msg.msg_menu_line_height = msg.msg_menu_line_height + (24 * rowNum);
+                            msg.msg_item_height = msg.msg_item_height + ((24+increaseNum1) * rowNum);
+                            msg.msg_height = msg.msg_height + ((24+increaseNum1) * rowNum);
+                            msg.msg_menu_height = msg.msg_menu_height + ((24+increaseNum1) * rowNum);
+                            msg.msg_menu_line_height = msg.msg_menu_line_height + ((24+increaseNum1) * rowNum);
                         }
                         if (note.top != 1) {
                             msg.bookmark_display = "none";
@@ -157,25 +169,93 @@ Page({
                         })
                         page = page + 1;
                     }
-                    canRefresh = true;
                 } else {
                     that.setData({
                         show: false,
                         noteTip: "暂无计划"
                     });
                 }
+                canRefresh = true;
+                that.getWeather();//获取天气
             })
         } else {
             that.setData({
                 userId: wx.getStorageSync('userId'),
+                folderList: wx.getStorageSync('folderList'),//修改文件夹的时候需要重置本地数据
                 folderNameList: wx.getStorageSync('folderNameList'),//修改文件夹的时候需要重置本地数据
                 beforeFolderList: wx.getStorageSync('beforeFolderList')
             });
             that.setData({
                 beforeFolderName: that.data.beforeFolderList[0]
             });
-            that.getFolderData();
+            if (currentFolderId == null || currentFolderId <= 0) {
+                currentFolderId = wx.getStorageSync('firstFolderId');
+                currentFolderIndex = 0;
+            }
+            that.getNoteData(currentFolderId, searchInputInfo);
         }
+    },
+    getWeather: function () {
+        var that = this;
+        //加载完计划列表后，请求获取天气数据
+        wx.getLocation({
+            type: 'wgs84',
+            success: function(res) {
+                var latitude = res.latitude;//纬度，浮点数，范围为-90~90，负数表示南纬
+                var longitude = res.longitude;//经度，浮点数，范围为-180~180，负数表示西经
+                var location = latitude + ":" + longitude;
+                var url = 'https://hellogood.top/hellogood_api/weather/getWeather/'+location+'.do'; //请求后台获取天气情况
+                wx.request({
+                    url: url,//请求地址
+                    method: "GET",
+                    success: function (res) {
+                        //如果在sucess直接写this就变成了wx.request()的this了.必须为getdata函数的this,不然无法重置调用函数
+                        var result = res.data;
+                        if (result.status == 'success') {
+                            var weatherResult = result.weatherResult;
+                            var text = weatherResult.results[0].now.text;
+                            var code = weatherResult.results[0].now.code;
+                            var temperature = weatherResult.results[0].now.temperature;
+                            that.setData({
+                                showWeather:true,
+                                weather:text + " " + temperature,
+                                code:code,
+                                showWeatherTip:''
+                            })
+                        } else if (result.status == 'failed') {
+                            if (result.message) {
+                                app.alertBox(result.message)
+                            } else {
+                                app.alertBox('服务器繁忙')
+                            }
+                        } else if (result.status == 'error') {
+                            if (result.message) {
+                                app.alertBox(result.message)
+                            } else {
+                                app.alertBox('服务器崩溃')
+                            }
+                        }
+                    },
+                    fail: function (err) {
+                        console.log(err);
+                        that.setData({
+                            showWeatherTip:"获取天气失败"
+                        })
+                        showRequestInfo();
+                    },//请求失败
+                    complete: function () {
+
+                    }//请求完成后执行的函数
+                });
+
+            },
+            fail: function (err) {
+                console.log(err);
+                that.setData({
+                    showWeatherTip:"获取定位失败"
+                })
+            }
+        })
     },
     onPullDownRefresh: function () {
         if (!canRefresh) return;
@@ -192,72 +272,21 @@ Page({
     pullUpLoad: function() {
         if (!canRefresh) return;
         var that = this;
-        console.log("total:"+total);
-        console.log("page:"+page);
-        console.log("pageSize:"+pageSize);
         if (that.data.hasMoreData) {
+            //显示加载中
+            wx.showToast({
+                title: '加载中...',
+                duration: 100,
+                icon: 'loading',
+            });
             that.getNoteData(currentFolderId, searchInputInfo);
         } else {
-            /*console.log("page6:"+page);
-           wx.showToast({
-                title: '看完计划了哟',
-                duration: 500
-            })*/
+            wx.showToast({
+                title: '没有更多计划了哟~',
+                icon: 'info',
+                duration: 1000
+            })
         }
-    },
-    getFolderData: function () {//定义函数名称
-        var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
-        wx.request({
-            url: 'https://hellogood.top/hellogood_api/folder/getFolderList.do',//请求地址
-            data: {//发送给后台的数据
-                page: 1,
-                pageSize: 15,
-                userId: that.data.userId
-            },
-            method: "POST",//get为默认方法/POST
-            success: function (res) {
-                //如果在sucess直接写this就变成了wx.request()的this了.必须为getdata函数的this,不然无法重置调用函数
-                var result = res.data
-                if (result.status == 'success') {
-                    that.setData({
-                        folderList: res.data.dataList,
-                        folderListSize: res.data.dataList.length
-                    });
-                    if (that.data.folderList.length <= 0) {
-                        wx.showToast({
-                            title: '网络异常，请刷新重试',
-                            icon: 'loading',
-                            duration: 5000
-                        })
-                        return;
-                    }
-
-                    if (currentFolderId == null || currentFolderId <= 0) {
-                        currentFolderId = that.data.folderList[0].id;
-                        currentFolderIndex = 0;
-                    }
-                    that.getNoteData(currentFolderId, searchInputInfo);
-                } else if (result.status == 'failed') {
-                    if (result.message) {
-                        app.alertBox(result.message)
-                    } else {
-                        app.alertBox('服务器繁忙')
-                    }
-                } else if (result.status == 'error') {
-                    if (result.message) {
-                        app.alertBox(result.message)
-                    } else {
-                        app.alertBox('服务器崩溃')
-                    }
-                }
-            },
-            fail: function (err) {
-                showRequestInfo();
-            },//请求失败
-            complete: function () {
-
-            }//请求完成后执行的函数
-        });
     },
     bindPickerChange: function (e) {
         var that = this;
@@ -280,12 +309,10 @@ Page({
         page = 1;
         that.data.msgList.splice(0, that.data.msgList.length);//清空数组
         that.setData({msgList: that.data.msgList, show:false});
-        console.log("--------1--------"+canRefresh);
         that.getNoteData(currentFolderId, searchInputInfo);
     },
     getNoteData: function (folderId, searchContent) {//定义函数名称
         canRefresh = false;
-        console.log("--------2--------"+canRefresh);
         var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
         wx.request({
             url: 'https://hellogood.top/hellogood_api/note/getNoteList.do',//请求地址
@@ -311,13 +338,8 @@ Page({
                             show: true
                         });
                         total = res.data.total;
-                        console.log("total:"+total);
-                        console.log("page1:"+page);
-
-                        console.log("page3:"+page);
                         //格式化
                         var tempList = that.data.noteList;
-                        console.log("2、tempList:" + tempList.length);
                         that.pixelRatio = app.globalData.deviceInfo.pixelRatio;
                         var windowHeight = app.globalData.deviceInfo.windowHeight;
                         var windowWidth = app.globalData.deviceInfo.windowWidth;
@@ -377,7 +399,6 @@ Page({
                             that.setData({
                                 hasMoreData:false
                             })
-                            console.log("page"+page);
                             if (page > 1) {
                                 scanDisplay = "";
                             } else {
@@ -409,11 +430,18 @@ Page({
                     }
                 }
                 canRefresh = true;
-                console.log("--------3--------"+canRefresh);
+                if (that.data.code == 99) {
+                    that.getWeather();//获取天气
+                }
             },
             fail: function (err) {
                 console.log(err);
                 showRequestInfo();
+                that.setData({
+                    show: false,
+                    noteTip: "暂无计划"
+                });
+                app.alertBox('服务器繁忙,请稍后再试');
             },
             complete: function () {
                 // complete
@@ -427,9 +455,6 @@ Page({
         var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
         var noteId = e.currentTarget.dataset.noteid;
         var finish = 1 - e.currentTarget.dataset.finish;
-        console.log(e);
-        console.log(noteId);
-        console.log(finish);
         wx.request({
             url: 'https://hellogood.top/hellogood_api/note/setFinish.do',//请求地址
             data: {//发送给后台的数据
@@ -593,15 +618,12 @@ Page({
         }.bind(this), 200)
     },
     click_cancel: function () {
-        console.log("点击取消");
         this.hideModal();
     },
     input_content: function (e) {
         inputinfo = e.detail.value;
-        console.log(inputinfo);
     },
     click_ok: function (e) {
-        console.log("------5------"+canRefresh);
         if (!canRefresh) return;
         var that = this;  // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
         var id = e.currentTarget.id;
@@ -685,44 +707,6 @@ Page({
         });
 
     },
-    mytouchstart: function (e) {
-        var that = this;
-        that.setData({
-            touch_start: e.timeStamp
-        })
-        console.log(e.timeStamp + '- touch-start')
-    },
-    //按下事件结束
-    mytouchend: function (e) {
-        var that = this;
-        that.setData({
-            touch_end: e.timeStamp
-        })
-        console.log(e.timeStamp + '- touch-end')
-    },
-    updateOrDelete: function (options) {
-        var that = this;
-        //触摸时间距离页面打开的毫秒数
-        var touchTime = that.data.touch_end - that.data.touch_start;
-        var id = options.currentTarget.id;
-        var content = options.currentTarget.dataset.content;
-        var display = 1 - options.currentTarget.dataset.display;
-
-        if (touchTime < 200) {
-            that.editNotebtn(id, content);
-        } else {
-            wx.showModal({
-                title: '删除计划',
-                content: '删除后可在【回收站】中找回',
-                success: function (res) {
-                    if (res.confirm) {
-                        that.setRecycle(id, display);
-                    }
-                }
-            })
-
-        }
-    },
     setRecycle: function (noteId, display, e) {
         if (!canRefresh) return;
         var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
@@ -800,7 +784,6 @@ Page({
     },
     searchInput: function (e) {
         searchInputInfo = e.detail.value;
-        console.log(searchInputInfo);
     },
     searchNotebtn: function () {
         var that = this;
@@ -849,7 +832,6 @@ Page({
         }
         //未触发滑动方向
         if (this.swipeDirection === 0) {
-            console.log(Math.abs(moveY));
             //触发垂直操作
             if (Math.abs(moveY) > 4) {
                 this.swipeDirection = 2;
@@ -924,15 +906,6 @@ Page({
     onDeleteMsgTap: function (e) {
         this.deleteMsgItem(e);
     },
-    onDeleteMsgLongtap: function (e) {
-        console.log(e);
-    },
-    onMarkMsgTap: function (e) {
-        console.log(e);
-    },
-    onMarkMsgLongtap: function (e) {
-        console.log(e);
-    },
     getItemIndex: function (id) {
         var msgList = this.data.msgList;
         for (var i = 0; i < msgList.length; i++) {
@@ -982,5 +955,19 @@ Page({
         that.setData({
             scrollTop : event.detail.scrollTop
         });
+    },
+    onShareAppMessage: function (res) {
+        return {
+            title: '橙子计划',
+            desc:'我发现了一款不错的小程序，橙子计划，不仅可以分类管理计划，还有智能提醒功能哟~',
+            path: '/pages/index/index',
+            imageUrl:'/image/icon_home.png',
+            success: function(res) {
+                console.log("转发成功:" +res); // 转发成功
+            },
+            fail: function(res) {
+                console.log("转发失败:" +res); // 转发失败
+            }
+        }
     }
 })

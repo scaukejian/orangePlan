@@ -11,7 +11,10 @@
                 <view class="navigate-inline folderName">
                     <view class="beforeFolder">{{beforeFolderName}}</view>
                     <view class="folder">{{folderNameList[index]}}</view>
-                    <view class="afterFolder">微风 阴雨</view>
+                    <view class="afterFolder">
+                        <view wx:if="{{showWeather}}"><image style="width: 20px;height: 20px" mode="aspectFit" src="../../image/{{code}}.png"></image>{{weather}} C</view>
+                        <view wx:else>{{showWeatherTip}}</view>
+                    </view>
                 </view>
             </picker>
             <!--新增按钮-->
