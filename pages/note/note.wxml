@@ -1,0 +1,37 @@
+<view class="container">
+    <!-- 显示标题-->
+    <view class="title-view">{{title}}</view>
+    <!-- 计划列表 bindscrolltoupper="onPullDownRefresh"-->
+    <view wx:if="{{show}}">
+        <scroll-view class='msg-list' style='height:{{height}}px;' scroll-y='{{scrollY}}'
+                       scroll-top="{{scrollTop}}"  bindscroll="scroll" bindscrolltolower="pullUpLoad"
+        >
+            <view class='msg-item' style='height:{{item.msg_item_height}}px;' wx:for="{{msgList}}" wx:for-index="index" wx:for-item="item" wx:key="id" animation='{{item.wrapAnimation}}'>
+                <view class='msg'  style='height:{{item.msg_height}}px;' id='{{item.id}}'  data-noteid="{{item.noteId}}" data-content="{{item.content}}" animation='{{item.animation}}'  bindtap="editNotebtn" bindtouchstart='ontouchstart' bindtouchmove='ontouchmove' bindtouchend='ontouchend'>
+                    <!-- 计划内容 -->
+                    <view class="note_contents" id="{{item.id}}">{{item.content}}</view>
+                    <!-- 计划时间 -->
+                    <view class="msg-text" >{{index + 1}}、{{item.updateTime}}
+                        <!-- 置顶/收藏按钮 -->
+                        <image class="bookmark" style="display: {{item.bookmark_display}}" mode="aspectFit" src="../../image/bookmark.png"></image>
+                        <image class="tick" style="display: {{item.tick_display}}" mode="aspectFit" src="../../image/tick.png"></image>
+                    </view>
+                </view>
+                <view class='msg-menu'>
+                    <view id='{{item.id}}' style='height:{{item.msg_menu_height}}px;line-height:{{item.msg_menu_line_height}}px;' data-noteid="{{item.noteId}}" data-display="{{item.display}}" class='menu-delete' bindtap='onDeleteMsgTap'>
+                        删除
+                    </view>
+                    <view id='{{item.id}}' style='height:{{item.msg_menu_height}}px;line-height:{{item.msg_menu_line_height}}px;' data-noteid="{{item.noteId}}" data-top="{{item.top}}" class='menu-Top' bindtap='changeTop'>
+                        {{item.top == 1 ? "取消置顶" : "置顶"}}
+                    </view>
+                    <view id='{{item.id}}' style='height:{{item.msg_menu_height}}px;line-height:{{item.msg_menu_line_height}}px;' data-noteid="{{item.noteId}}" data-finish="{{item.finish}}" class='menu-finish' bindtap='changeFinish'>
+                        {{item.finish == 1 ? "取消完成" : "完成"}}
+                    </view>
+                </view>
+            </view>
+        </scroll-view>
+    </view>
+    <view wx:else style="text-align: center;margin-top: 50%;">
+        {{noteTip}}
+    </view>
+</view>

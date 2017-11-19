@@ -1,0 +1,22 @@
+<view class="container user-list">
+  <view class="myInfo">
+    <view class="headPhoto inline-view"><image style="width: 60px;height: 60px" mode="aspectFit" src="../../image/0.png"></image></view>
+    <view class="user inline-view">
+      <view class="userName">柯坚</view>
+      <view class="userID">ID:522564232</view>
+    </view>
+    <view class="endExtend inline-view"> > </view>
+  </view>
+
+  <view class="note">
+  <view class="folder">文件夹<view class="note_endExtend inline-view"> > </view></view>
+  <view class="finish" bindtap='finishList'>已完成<view class="note_endExtend inline-view"> > </view></view>
+  <view class="top" bindtap='topList'>已置顶<view class="note_endExtend inline-view"> > </view></view>
+  <view class="delete" bindtap='recycleList'>回收站<view class="note_endExtend inline-view"> > </view></view>
+  </view>
+
+  <view class="other">
+  <view class="back">反馈<view class="other_endExtend inline-view"> > </view></view>
+  <view class="about">关于<view class="other_endExtend inline-view"> > </view></view>
+  </view>
+</view>

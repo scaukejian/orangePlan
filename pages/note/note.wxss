@@ -1,0 +1,138 @@
+/**note.wxss**/
+.note_content {
+  font-size: 16px;
+  color: #636363;
+  font-family: "Verdana";
+  padding: 10px 3px 3px 10px;
+  width: 89%;
+}
+
+.time {
+  width: 100%;
+  padding: 0px 0px 10px 10px;
+  font-size: 12px;
+  color: #999;
+  font-weight: normal;
+  font-style: italic;
+  border-bottom: 1px #e6e6e6 solid;
+}
+
+.inline-view {
+  display: inline-block;
+}
+
+.note-view {
+  display: flex;
+  flex-wrap: wrap;
+}
+.navigate-view {
+  white-space: nowrap;
+  display: flex;
+  width: 100%;
+  border-top: 1px #E6E6E6 solid;
+  border-bottom: 1px #E6E6E6 solid;
+}
+.navigate-inline {
+  display: inline-block;
+  color: #53b6e0;
+  height: 25px;
+  line-height: 25px;
+  font-size: 22px;
+  padding: 2px;
+  text-align: center;
+}
+.msg-list {
+}
+.msg-item {
+  width: 100%;
+  border-bottom: 1rpx solid rgb(233, 233, 233);
+  position: relative;
+  left:0;
+  top:0;
+  overflow: auto;
+}
+.msg {
+  position: absolute;
+  width: 100%;
+  left:0;
+  top:0;
+  z-index: 100;
+  background-color: #FFF;
+  overflow: auto;
+}
+
+.note_contents {
+  position: absolute;
+  top: 7px;
+  padding-left: 8px;
+  padding-right: 8px;
+  word-break: break-all;
+  line-height:150%;
+}
+
+.msg-text {
+  position: absolute;
+  bottom: 7px;
+  font-size: 14px;
+  color: rgb(127, 127, 127);
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.msg-menu {
+  position: absolute;
+  width: 100%;
+  left:0;
+  top:0;
+  z-index: 0;
+}
+
+.menu-delete {
+  position: absolute;
+  width: 130rpx;
+  top:0rpx;
+  right: 350rpx;
+  background-color: rgb(255, 58, 50);
+  color:#FFF;
+  text-align: center;
+}
+
+.menu-Top {
+  position: absolute;
+  width: 175rpx;
+  top:0rpx;
+  right: 175rpx;
+  background-color: green;
+  color:#FFF;
+  text-align: center;
+}
+
+.menu-finish {
+  position: absolute;
+  width: 175rpx;
+  top:0rpx;
+  right: 0;
+  background-color: #10aeff;
+  color:#FFF;
+  text-align: center;
+}
+.bookmark {
+  width: 13px;
+  height:13px;
+  margin-right: 5px;
+}
+.tick {
+  width: 15px;
+  height:15px;
+}
+.title-view {
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px #e6e6e6 solid;
+  height: 30px;
+  line-height: 30px;
+  font-size: 20px;
+  color: #10aeff;
+}
+
+
