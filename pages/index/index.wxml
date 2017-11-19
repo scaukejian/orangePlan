@@ -58,10 +58,10 @@
             </view>
         </view>
     </view>
-    <!-- 计划列表 -->
+    <!-- 计划列表 bindscrolltoupper="onPullDownRefresh"-->
     <view wx:if="{{show}}">
         <scroll-view class='msg-list' style='height:{{height}}px;' scroll-y='{{scrollY}}'
-                     bindscrolltoupper="onPullDownRefresh"  scroll-top="{{scrollTop}}"  bindscroll="scroll" bindscrolltolower="pullUpLoad"
+                       scroll-top="{{scrollTop}}"  bindscroll="scroll" bindscrolltolower="pullUpLoad"
         >
             <view class='msg-item' style='height:{{item.msg_item_height}}px;' wx:for="{{msgList}}" wx:for-index="index" wx:for-item="item" wx:key="id" animation='{{item.wrapAnimation}}'>
                 <view class='msg'  style='height:{{item.msg_height}}px;' id='{{item.id}}'  data-noteid="{{item.noteId}}" data-content="{{item.content}}" animation='{{item.animation}}'  bindtap="editNotebtn" bindtouchstart='ontouchstart' bindtouchmove='ontouchmove' bindtouchend='ontouchend'>

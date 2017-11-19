@@ -176,7 +176,25 @@ Page({
                     });
                 }
                 canRefresh = true;
-                that.getWeather();//获取天气
+
+                //加载完计划列表后，请求获取天气数据
+                wx.getLocation({
+                    type: 'wgs84',
+                    success: function(res) {
+                        var latitude = res.latitude;//纬度，浮点数，范围为-90~90，负数表示南纬
+                        var longitude = res.longitude;//经度，浮点数，范围为-180~180，负数表示西经
+                        var location = latitude + ":" + longitude;
+                        wx.setStorageSync('location', location);
+                        that.getWeather(location);//获取天气
+                    },
+                    fail: function (err) {
+                        console.log(err);
+                        that.setData({
+                            showWeatherTip:"获取定位失败"
+                        })
+                    }
+                })
+
             })
         } else {
             that.setData({
@@ -195,67 +213,52 @@ Page({
             that.getNoteData(currentFolderId, searchInputInfo);
         }
     },
-    getWeather: function () {
+    getWeather: function (location) {
         var that = this;
         //加载完计划列表后，请求获取天气数据
-        wx.getLocation({
-            type: 'wgs84',
-            success: function(res) {
-                var latitude = res.latitude;//纬度，浮点数，范围为-90~90，负数表示南纬
-                var longitude = res.longitude;//经度，浮点数，范围为-180~180，负数表示西经
-                var location = latitude + ":" + longitude;
-                var url = 'https://hellogood.top/hellogood_api/weather/getWeather/'+location+'.do'; //请求后台获取天气情况
-                wx.request({
-                    url: url,//请求地址
-                    method: "GET",
-                    success: function (res) {
-                        //如果在sucess直接写this就变成了wx.request()的this了.必须为getdata函数的this,不然无法重置调用函数
-                        var result = res.data;
-                        if (result.status == 'success') {
-                            var weatherResult = result.weatherResult;
-                            var text = weatherResult.results[0].now.text;
-                            var code = weatherResult.results[0].now.code;
-                            var temperature = weatherResult.results[0].now.temperature;
-                            that.setData({
-                                showWeather:true,
-                                weather:text + " " + temperature,
-                                code:code,
-                                showWeatherTip:''
-                            })
-                        } else if (result.status == 'failed') {
-                            if (result.message) {
-                                app.alertBox(result.message)
-                            } else {
-                                app.alertBox('服务器繁忙')
-                            }
-                        } else if (result.status == 'error') {
-                            if (result.message) {
-                                app.alertBox(result.message)
-                            } else {
-                                app.alertBox('服务器崩溃')
-                            }
-                        }
-                    },
-                    fail: function (err) {
-                        console.log(err);
-                        that.setData({
-                            showWeatherTip:"获取天气失败"
-                        })
-                        showRequestInfo();
-                    },//请求失败
-                    complete: function () {
-
-                    }//请求完成后执行的函数
-                });
-
+        var url = 'https://hellogood.top/hellogood_api/weather/getWeather/'+location+'.do'; //请求后台获取天气情况
+        wx.request({
+            url: url,//请求地址
+            method: "GET",
+            success: function (res) {
+                //如果在sucess直接写this就变成了wx.request()的this了.必须为getdata函数的this,不然无法重置调用函数
+                var result = res.data;
+                if (result.status == 'success') {
+                    var weatherResult = result.weatherResult;
+                    var text = weatherResult.results[0].now.text;
+                    var code = weatherResult.results[0].now.code;
+                    var temperature = weatherResult.results[0].now.temperature;
+                    that.setData({
+                        showWeather:true,
+                        weather:text + " " + temperature,
+                        code:code,
+                        showWeatherTip:''
+                    })
+                } else if (result.status == 'failed') {
+                    if (result.message) {
+                        app.alertBox(result.message)
+                    } else {
+                        app.alertBox('服务器繁忙')
+                    }
+                } else if (result.status == 'error') {
+                    if (result.message) {
+                        app.alertBox(result.message)
+                    } else {
+                        app.alertBox('服务器崩溃')
+                    }
+                }
             },
             fail: function (err) {
                 console.log(err);
                 that.setData({
-                    showWeatherTip:"获取定位失败"
+                    showWeatherTip:"获取天气失败"
                 })
-            }
-        })
+                showRequestInfo();
+            },//请求失败
+            complete: function () {
+
+            }//请求完成后执行的函数
+        });
     },
     onPullDownRefresh: function () {
         if (!canRefresh) return;
@@ -430,8 +433,26 @@ Page({
                     }
                 }
                 canRefresh = true;
-                if (that.data.code == 99) {
-                    that.getWeather();//获取天气
+                var location = wx.getStorageSync('location');
+                if (location == '') {
+                    wx.getLocation({
+                        type: 'wgs84',
+                        success: function(res) {
+                            var latitude = res.latitude;//纬度，浮点数，范围为-90~90，负数表示南纬
+                            var longitude = res.longitude;//经度，浮点数，范围为-180~180，负数表示西经
+                            var location = latitude + ":" + longitude;
+                            wx.setStorageSync('location', location);
+                            that.getWeather(location);//获取天气
+                        },
+                        fail: function (err) {
+                            console.log(err);
+                            that.setData({
+                                showWeatherTip:"获取定位失败"
+                            })
+                        }
+                    })
+                } else {
+                    that.getWeather(location);//获取天气
                 }
             },
             fail: function (err) {
