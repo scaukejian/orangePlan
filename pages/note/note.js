@@ -122,9 +122,6 @@ Page({
                 title:"回收站"
             })
         }
-        console.log(data.finish+"-------1-------"+that.data.finish);
-        console.log(data.top+"-------2-------"+that.data.top);
-        console.log(data.display+"-------3-------"+that.data.display);
         wx.request({
             url: 'https://hellogood.top/hellogood_api/note/getNoteList.do',//请求地址
             data:data,
@@ -537,6 +534,81 @@ Page({
         }
         return -1;
     },
+    deleteReverseTap: function (e) {
+        var that = this;
+        var noteId = e.currentTarget.dataset.noteid;
+        var display = 1 - e.currentTarget.dataset.display;
+        wx.showModal({
+            title: '移出回收站',
+            content: '此操作可让计划在首页展示',
+            success: function (res) {
+                if (res.confirm) {
+                    that.setRecycle(noteId, display, e);
+                }
+            }
+        })
+    },
+    deleteOverTap: function (e) {
+        var that = this;
+        var noteId = e.currentTarget.dataset.noteid;
+        wx.showModal({
+            title: '彻底删除',
+            content: '此操作不可恢复',
+            success: function (res) {
+                if (res.confirm) {
+                    that.deleteOne(noteId, e);
+                }
+            }
+        })
+    },
+    deleteOne: function (noteId, e) {
+        if (!canRefresh) return;
+        var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
+        wx.request({
+            url: 'https://hellogood.top/hellogood_api/note/delete.do',//请求地址
+            data: {//发送给后台的数据
+                id: noteId,
+                userId: that.data.userId
+            },
+            method: "POST",//get为默认方法/POST
+            success: function (res) {
+                //如果在sucess直接写this就变成了wx.request()的this了.必须为getdata函数的this,不然无法重置调用函数
+                var result = res.data
+                if (result.status == 'success') {
+                    that.translateXMsgItem(e.currentTarget.id, 0, 0);
+                    page = 1;
+                    that.data.msgList.splice(0, that.data.msgList.length);//清空数组
+                    that.setData({msgList: that.data.msgList, show:false});
+                    that.getNoteData();
+                    wx.showToast({
+                        title: '已删除',
+                        icon: 'success',
+                        duration: 500
+                    })
+                } else if (result.status == 'failed') {
+                    if (result.message) {
+                        app.alertBox(result.message)
+                    } else {
+                        app.alertBox('服务器繁忙')
+                    }
+                } else if (result.status == 'error') {
+                    if (result.message) {
+                        app.alertBox(result.message)
+                    } else {
+                        app.alertBox('服务器崩溃')
+                    }
+                }
+            },
+            fail: function (err) {
+                console.log(err);
+                showRequestInfo();
+            },//请求失败
+            complete: function () {
+
+            }//请求完成后执行的函数
+        });
+    },
+
     deleteMsgItem: function (e) {
         var that = this;
         var noteId = e.currentTarget.dataset.noteid;

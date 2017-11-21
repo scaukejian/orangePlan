@@ -1,0 +1,31 @@
+.version {
+  margin: 10px 0px;
+  width:100%;
+  font-size: 20px;
+  text-align: center;
+  color: #10aeff;
+}
+.introduction {
+  border-top: 1px #e6e6e6 solid;
+  border-bottom: 1px #e6e6e6 solid;
+  font-size: 14px;
+  text-align: left;
+  padding: 5px 20px;
+  word-break: break-all;
+  line-height: 30px;
+}
+.dev {
+  margin: 10px 0px;
+  width:100%;
+  font-size: 14px;
+  text-align: center;
+}
+.email {
+  margin: 10px 0px;
+  width:100%;
+  font-size: 14px;
+  text-align: center;
+}
+.blue {
+  color: #10aeff;
+}

@@ -19,5 +19,10 @@ Page({
         wx.navigateTo({
             url: '../note/note?display=0'
         });
+    },
+    help: function (e) {
+        wx.navigateTo({
+            url: '../help/help'
+        });
     }
 })

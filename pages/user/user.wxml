@@ -16,7 +16,6 @@
   </view>
 
   <view class="other">
-  <view class="back">反馈<view class="other_endExtend inline-view"> > </view></view>
-  <view class="about">关于<view class="other_endExtend inline-view"> > </view></view>
+  <view class="back" bindtap='help'>帮助反馈<view class="other_endExtend inline-view"> > </view></view>
   </view>
 </view>

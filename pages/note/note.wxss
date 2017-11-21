@@ -97,6 +97,26 @@
   text-align: center;
 }
 
+.menu-deleteOver {
+  position: absolute;
+  width: 200rpx;
+  top:0rpx;
+  right: 200rpx;
+  background-color: rgb(255, 58, 50);
+  color:#FFF;
+  text-align: center;
+}
+
+.menu-deleteReverse {
+  position: absolute;
+  width: 200rpx;
+  top:0rpx;
+  right: 0rpx;
+  background-color: green;
+  color:#FFF;
+  text-align: center;
+}
+
 .menu-Top {
   position: absolute;
   width: 175rpx;

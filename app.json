@@ -2,7 +2,8 @@
   "pages": [
     "pages/user/user",
     "pages/index/index",
-    "pages/note/note"
+    "pages/note/note",
+    "pages/help/help"
   ],
   "window": {
     "navigationBarTextStyle": "white",
