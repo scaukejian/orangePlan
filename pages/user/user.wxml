@@ -9,7 +9,7 @@
   </view>
 
   <view class="note">
-  <view class="folder">文件夹<view class="note_endExtend inline-view"> > </view></view>
+  <view class="folder" bindtap='folderList'>文件夹<view class="note_endExtend inline-view"> > </view></view>
   <view class="finish" bindtap='finishList'>已完成<view class="note_endExtend inline-view"> > </view></view>
   <view class="top" bindtap='topList'>已置顶<view class="note_endExtend inline-view"> > </view></view>
   <view class="delete" bindtap='recycleList'>回收站<view class="note_endExtend inline-view"> > </view></view>

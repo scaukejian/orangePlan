@@ -1,0 +1,71 @@
+<view class="container">
+    <!-- 计划列表 bindscrolltoupper="onPullDownRefresh"-->
+    <view wx:if="{{show}}">
+        <scroll-view class='msg-list' style='height:{{height}}px;' scroll-y='{{scrollY}}'
+                     scroll-top="{{scrollTop}}" bindscroll="scroll" bindscrolltolower="pullUpLoad"
+        >
+            <view class='msg-item' style='height:{{item.msg_item_height}}px;' wx:for="{{msgList}}" wx:for-index="index"
+                  wx:for-item="item" wx:key="id" animation='{{item.wrapAnimation}}'>
+                <view class='msg-menu' wx:if="{{item.userId > 0}}">
+                    <view class='msg' style='height:{{item.msg_height}}px;' id='{{item.id}}'
+                          data-folderid="{{item.folderId}}"
+                          data-name="{{item.name}}" animation='{{item.animation}}' bindtap="getNoteList"
+                          bindtouchstart='ontouchstart' bindtouchmove='ontouchmove' bindtouchend='ontouchend'>
+                        <!-- 计划内容 -->
+                        <view class="folder_contents" id="{{item.id}}">{{index + 1}}、{{item.name}}</view>
+                    </view>
+                    <view class='msg-menu'>
+                        <view id='{{item.id}}'
+                              style='height:{{item.msg_menu_height}}px;line-height:{{item.msg_menu_line_height}}px;'
+                              data-folderid="{{item.folderId}}" data-display="{{item.display}}" class='menu-delete'
+                              bindtap='onDeleteMsgTap'>
+                            删除
+                        </view>
+                        <view id='{{item.id}}'
+                              style='height:{{item.msg_menu_height}}px;line-height:{{item.msg_menu_line_height}}px;'
+                              data-folderid="{{item.folderId}}" data-name="{{item.name}}" class='menu-Edit'
+                              bindtap='editFolderbtn'>
+                            修改
+                        </view>
+                    </view>
+                </view>
+                <view wx:else>
+                    <view class='msg' style='height:{{item.msg_height}}px;' id='{{item.id}}'
+                          data-folderid="{{item.folderId}}"  bindtap="getNoteList"
+                          data-name="{{item.name}}">
+                        <!-- 计划内容 -->
+                        <view class="folder_contents" id="{{item.id}}">{{index + 1}}、{{item.name}}</view>
+                    </view>
+                </view>
+            </view>
+        </scroll-view>
+    </view>
+    <view wx:else style="text-align: center;margin-top: 50%;">
+        {{folderTip}}
+    </view>
+    <!--新增按钮-->
+    <view class="addBtn navigate-inline" bindtap="addFolderbtn">
+        <text class="addBtnText">+</text>
+    </view>
+    <form bindsubmit="click_ok" id="{{folderId}}">
+        <!--增加修改弹出层-->
+        <view class="folder_add_screen" bindtap="hideModal" wx:if="{{showModalStatus}}"></view>
+        <view animation="{{animationData}}" class="folder_add_box" wx:if="{{showModalStatus}}">
+            <!--对话框标题-->
+            <view class="dialog-title">{{editTip}}</view>
+            <view class="section">
+                <input id="folder_content_area" bindinput="input_content"
+                       class="input-style" maxlength="100"
+                       value="{{name}}"/>
+            </view>
+            <!--对话框按钮  style="{{height_textarea}}"-->
+            <view class="line-top"></view>
+            <view class="btn-view">
+                <view class="btn-cancel" bindtap="click_cancel">取 消</view>
+                <!-- <view class="btn-cancel" id="{{folderId}}" bindtap="click_ok">确 定</view> -->
+                <button size="default" formType="submit" class="btn-cancel" class="btn-submit">确 定</button>
+            </view>
+        </view>
+    </form>
+
+</view>

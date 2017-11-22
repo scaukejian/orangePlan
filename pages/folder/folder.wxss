@@ -1,0 +1,215 @@
+/**folder.wxss**/
+.folder_content {
+  font-size: 16px;
+  color: #636363;
+  font-family: "Verdana";
+  padding: 10px 3px;
+  width: 100%;
+}
+
+.inline-view {
+  display: inline-block;
+}
+
+.folder-view {
+  display: flex;
+  flex-wrap: wrap;
+}
+.navigate-view {
+  white-space: nowrap;
+  display: flex;
+  width: 100%;
+  border-top: 1px #E6E6E6 solid;
+  border-bottom: 1px #E6E6E6 solid;
+}
+.navigate-inline {
+  display: inline-block;
+  color: #53b6e0;
+  height: 25px;
+  line-height: 25px;
+  font-size: 22px;
+  padding: 2px;
+  text-align: center;
+}
+.msg-list {
+}
+.msg-item {
+  width: 100%;
+  border-bottom: 1rpx solid rgb(233, 233, 233);
+  position: relative;
+  left:0;
+  top:0;
+  overflow: auto;
+}
+.msg {
+  position: absolute;
+  width: 100%;
+  left:0;
+  top:0;
+  z-index: 100;
+  background-color: #FFF;
+  overflow: auto;
+}
+
+.folder_contents {
+  position: absolute;
+  top: 7px;
+  padding-left: 8px;
+  padding-right: 8px;
+  word-break: break-all;
+  line-height:150%;
+}
+
+.msg-text {
+  position: absolute;
+  bottom: 7px;
+  font-size: 14px;
+  color: rgb(127, 127, 127);
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.msg-menu {
+  position: absolute;
+  width: 100%;
+  left:0;
+  top:0;
+  z-index: 0;
+}
+
+.menu-Edit {
+  position: absolute;
+  width: 130rpx;
+  top:0rpx;
+  right: 0rpx;
+  background-color: green;
+  color:#FFF;
+  text-align: center;
+}
+.menu-delete {
+  position: absolute;
+  width: 130rpx;
+  top:0rpx;
+  right: 130rpx;
+  background-color: rgb(255, 58, 50);
+  color:#FFF;
+  text-align: center;
+}
+.title-view {
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px #e6e6e6 solid;
+  height: 30px;
+  line-height: 30px;
+  font-size: 20px;
+  color: #10aeff;
+}
+
+.input-style {
+  height: 15px;
+  width:95%;
+  margin: 3px auto;
+  border: 1px #bfefff solid;
+  border-radius: 20px;
+  padding: 3px;
+}
+
+.addBtn{
+  width:10%;
+  padding-bottom: 4px;
+  background-color: #10aeff;
+  border-radius: 50%;
+
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  opacity: 0.8;
+
+}
+.addBtnText {
+  color: #FFF;
+  font-size: 25px;
+}
+
+.add_view {
+  position: fixed;
+  bottom: 0rpx;
+  right: 88rpx;
+  _position: absolute;
+  color: white;
+}
+.folder_add_screen {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #000;
+  opacity: 0.2;
+  overflow: hidden;
+  z-index: 1000;
+  color: #fff;
+}
+
+.folder_add_box {
+  width: 100%;
+  overflow: hidden;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 2000;
+  background: #fff;
+  color: #10aeff;
+  /*display: flex;
+  flex-direction: column;
+  justify-content: center;*/
+}
+
+.btn-line {
+  width: 1px;
+  background-color: #bfefff;
+}
+
+.btn-view {
+  width: 100%;
+  display: flex;
+  height: 40px;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.line-top {
+  width: 100%;
+  height: 1px;
+  background-color: #bfefff;
+}
+
+.btn-cancel,.btn-submit {
+  width: 50%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.btn-submit{
+  background-color: #10aeff;
+  color:white;
+}
+
+
+.dialog-title {
+  margin-top: 20px;
+  text-align: center;
+  margin-bottom: 15px;
+
+}
+
+.input-style {
+  height: 40px;
+  width:90%;
+  margin: 15px auto;
+  border: 1px #bfefff solid;
+  border-radius: 5px;
+  padding: 10px;
+}

@@ -2,32 +2,30 @@
 //获取应用实例
 var utils = require('../../utils/util.js')
 var app = getApp();
-var mini = 1;
 // 当前页数
 var page = 1;
-var pageSize = 10;
+var pageSize = 15;
 var total = 0;
 var canRefresh = true;
-var scanDisplay = 'display:none';
+var inputinfo = "";
 Page({
     data: {
         userId: 0,
-        noteList: [],
-        noteTotal:0,
-        noteId: 0,
+        name:'',
+        folderList: [],
+        folderTotal:0,
+        folderId: 0,
         currentGesture: 0,
         index: 0,
         show: false,
         msgList: [],
         height: 0,
         scrollY: true,
-        noteTip: '拼命加载中...',
+        folderTip: '拼命加载中...',
         scrollTop : 0,
         hasMoreData:true,
-        finish:'',
-        top:'',
-        display:'',
-        title:''
+        title:'',
+        editTip:''
     },
     swipeCheckX: 35, //激活检测滑动的阈值
     swipeCheckState: 0, //0未激活 1激活
@@ -53,13 +51,8 @@ Page({
                 userId: wx.getStorageSync('userId')
             });
         }
-        that.setData({
-            finish:option.finish,
-            top:option.top,
-            display:option.display,
-        })
         page = 1;
-        that.getNoteData();
+        that.getFolderData();
     },
     onPullDownRefresh: function () {
         if (!canRefresh) return;
@@ -70,7 +63,7 @@ Page({
         page = 1;
         that.data.msgList.splice(0, that.data.msgList.length);//清空数组
         that.setData({msgList: that.data.msgList, show:false});
-        that.getNoteData();
+        that.getFolderData();
     },
     // 上拉加载数据 上拉动态效果不明显有待改善
     pullUpLoad: function() {
@@ -83,47 +76,25 @@ Page({
                 duration: 100,
                 icon: 'loading',
             });
-            that.getNoteData();
+            that.getFolderData();
         } else {
-            wx.showToast({
-                title: '没有更多计划了哟~',
+            /*wx.showToast({
+                title: '没有更多文件夹了哟~',
                 icon: 'info',
                 duration: 1000
-            })
+            })*/
         }
     },
-    getNoteData: function () {//定义函数名称
+    getFolderData: function () {//定义函数名称
         canRefresh = false;
         var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
         var data = {//发送给后台的数据
                 userId: that.data.userId,
                 page: page,
-                pageSize: pageSize,
-                mini: mini
-        }
-        console.log(that.data.finish);
-        if (that.data.finish != undefined){
-            data.finish = that.data.finish;
-            data.display = 1;
-            that.setData({
-                title:"已完成"
-            })
-        }
-        if (that.data.top != undefined){
-            data.top = that.data.top;
-            data.display = 1;
-            that.setData({
-                title:"已置顶"
-            })
-        }
-        if (that.data.display != undefined){
-            data.display = that.data.display;
-            that.setData({
-                title:"回收站"
-            })
+                pageSize: pageSize
         }
         wx.request({
-            url: 'https://hellogood.top/hellogood_api/note/getNoteList.do',//请求地址
+            url: 'https://hellogood.top/hellogood_api/folder/getFolderList.do',//请求地址
             data:data,
             method: "POST",//get为默认方法/POST
             success: function (res) {
@@ -131,15 +102,15 @@ Page({
                 var result = res.data
                 if (result.status == 'success') {
                     that.setData({
-                        noteList: res.data.dataList
+                        folderList: res.data.dataList
                     });
-                    if (that.data.noteList != null && that.data.noteList.length > 0) {
+                    if (that.data.folderList != null && that.data.folderList.length > 0) {
                         that.setData({
                             show: true
                         });
                         total = res.data.total;
                         //格式化
-                        var tempList = that.data.noteList;
+                        var tempList = that.data.folderList;
                         that.pixelRatio = app.globalData.deviceInfo.pixelRatio;
                         var windowHeight = app.globalData.deviceInfo.windowHeight;
                         var windowWidth = app.globalData.deviceInfo.windowWidth;
@@ -150,7 +121,7 @@ Page({
                         } else {
                             height = windowHeight - 31;
                         }
-                        //that.data.msgList.splice(0, that.data.msgList.length);//清空数组（切换计划的时候清空缓存数据）
+                        //that.data.msgList.splice(0, that.data.msgList.length);//清空数组（切换文件夹的时候清空缓存数据）
                         var increaseNum1 = 4;
                         var increaseNum2 = 7;
                         if (windowWidth < 375) {
@@ -162,21 +133,18 @@ Page({
                             }
                         }
                         for (var i = 0; i < tempList.length; i++) {
-                            var note = tempList[i];
+                            var folder = tempList[i];
                             var msg = {};
                             msg.id = 'id-' + (i + 1 + (page -1) * pageSize);
-                            msg.noteId = note.id;
-                            msg.content = note.content;
-                            msg.top = note.top;
-                            msg.display = note.display;
-                            msg.finish = note.finish;
-                            msg.updateTime = utils.formatTime(new Date(note.updateTime));
-                            msg.msg_item_height = 58+increaseNum1;
-                            msg.msg_height = 58+increaseNum1;
-                            msg.msg_menu_height = 57+increaseNum1;
-                            msg.msg_menu_line_height = 58+increaseNum1;
-                            var length = utils.strlen(note.content);
-                            if (note.content != null && length > (37 + increaseNum2)) {
+                            msg.folderId = folder.id;
+                            msg.name = folder.name;
+                            msg.userId = folder.userId;
+                            msg.msg_item_height = 38+increaseNum1;
+                            msg.msg_height = 38+increaseNum1;
+                            msg.msg_menu_height = 37+increaseNum1;
+                            msg.msg_menu_line_height = 38+increaseNum1;
+                            var length = utils.strlen(folder.name);
+                            if (folder.name != null && length > (37 + increaseNum2)) {
                                 var rowNum = Math.floor(length /  (37 + increaseNum2));
                                 if (length % (37 + increaseNum2) == 0) {
                                     rowNum = rowNum - 1;
@@ -186,24 +154,13 @@ Page({
                                 msg.msg_menu_height = msg.msg_menu_height + ((24+increaseNum1) * rowNum);
                                 msg.msg_menu_line_height = msg.msg_menu_line_height + ((24+increaseNum1) * rowNum);
                             }
-                            if (note.top != 1) {
-                                msg.bookmark_display = "none";
-                            }
-                            if (note.finish != 1) {
-                                msg.tick_display = "none";
-                            }
                             that.data.msgList.push(msg);
                         }
                         that.setData({msgList: that.data.msgList, height: height});
-                        if (that.data.noteList.length < pageSize) {
+                        if (that.data.folderList.length < pageSize) {
                             that.setData({
                                 hasMoreData:false
                             })
-                            if (page > 1) {
-                                scanDisplay = "";
-                            } else {
-                                scanDisplay = 'display:none';
-                            }
                         } else {
                             that.setData({
                                 hasMoreData:true
@@ -213,7 +170,7 @@ Page({
                     } else {
                         that.setData({
                             show: false,
-                            noteTip: "暂无计划"
+                            folderTip: "暂无文件夹"
                         });
                     }
                 } else if (result.status == 'failed') {
@@ -236,7 +193,7 @@ Page({
                 showRequestInfo();
                 that.setData({
                     show: false,
-                    noteTip: "暂无计划"
+                    folderTip: "暂无文件夹"
                 });
                 app.alertBox('服务器繁忙,请稍后再试');
             },
@@ -247,41 +204,110 @@ Page({
             }
         });
     },
-    changeFinish: function (e) {
+    showModal: function () {
+        // 显示遮罩层
+        var animation = wx.createAnimation({
+            duration: 200,
+            timingFunction: "linear",
+            delay: 0
+        })
+        this.animation = animation
+        animation.translateY(300).step()
+        this.setData({
+            animationData: animation.export(),
+            showModalStatus: true
+        })
+        setTimeout(function () {
+            animation.translateY(0).step()
+            this.setData({
+                animationData: animation.export()
+            })
+        }.bind(this), 200)
+    },
+    addFolderbtn: function () {
+        this.setData({
+            name: "",
+            folderId: 0,
+            editTip:"新增文件夹"
+        });
+        if (this.data.showModalStatus) {
+            this.hideModal();
+        } else {
+            this.showModal();
+        }
+    },
+    hideModal: function () {
+        // 隐藏遮罩层
+        var animation = wx.createAnimation({
+            duration: 200,
+            timingFunction: "linear",
+            delay: 0
+        })
+        this.animation = animation
+        animation.translateY(300).step()
+        this.setData({
+            animationData: animation.export(),
+        })
+        setTimeout(function () {
+            animation.translateY(0).step()
+            this.setData({
+                animationData: animation.export(),
+                showModalStatus: false
+            })
+        }.bind(this), 200)
+    },
+    click_cancel: function () {
+        this.hideModal();
+    },
+    input_content: function (e) {
+        inputinfo = e.detail.value;
+    },
+    click_ok: function (e) {
         if (!canRefresh) return;
-        var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
-        var noteId = e.currentTarget.dataset.noteid;
-        var finish = 1 - e.currentTarget.dataset.finish;
+        var that = this;  // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
+        var id = e.currentTarget.id;
+        var url = '';
+        var title = '';
+        var sentData = {//发送给后台的数据
+            name: inputinfo,
+            userId: that.data.userId
+        }
+        if (id == null || id == 0) {
+            if (inputinfo == '') {
+                app.alertBox('文件夹内容不能为空!');
+                return;
+            }
+            url = 'https://hellogood.top/hellogood_api/folder/add.do';
+            title = '已添加';
+        } else {
+            if (inputinfo == '') {
+                that.hideModal();
+                return;
+            }
+            url = 'https://hellogood.top/hellogood_api/folder/update.do';
+            sentData.id = id;
+            title = '已更新';
+        }
+
         wx.request({
-            url: 'https://hellogood.top/hellogood_api/note/setFinish.do',//请求地址
-            data: {//发送给后台的数据
-                id: noteId,
-                finish: finish,
-                userId: that.data.userId
-            },
+            url: url,//请求地址
+            data: sentData,
             method: "POST",//get为默认方法/POST
             success: function (res) {
                 //如果在sucess直接写this就变成了wx.request()的this了.必须为getdata函数的this,不然无法重置调用函数
                 var result = res.data
                 if (result.status == 'success') {
-                    that.translateXMsgItem(e.currentTarget.id, 0, 0);
                     page = 1;
                     that.data.msgList.splice(0, that.data.msgList.length);//清空数组
                     that.setData({msgList: that.data.msgList, show:false});
-                    that.getNoteData();
-                    if (finish == 1) {
-                        wx.showToast({
-                            title: '已完成',
-                            icon: 'success',
-                            duration: 500
-                        })
-                    } else {
-                        wx.showToast({
-                            title: '未完成',
-                            icon: 'success',
-                            duration: 500
-                        })
-                    }
+                    that.getFolderData();
+                    wx.showToast({
+                        title: title,
+                        icon: 'success',
+                        duration: 500
+                    });
+                    that.hideModal();
+                    inputinfo = "";
                 } else if (result.status == 'failed') {
                     if (result.message) {
                         app.alertBox(result.message)
@@ -301,20 +327,31 @@ Page({
                 showRequestInfo();
             },//请求失败
             complete: function () {
-
+                inputinfo = "";
             }//请求完成后执行的函数
         });
     },
-    changeTop: function (e) {
+    editFolderbtn: function (e) {
+        var that = this;
+        //触摸时间距离页面打开的毫秒数
+        var folderId = e.currentTarget.dataset.folderid;
+        var name = e.currentTarget.dataset.name;
+        var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
+        that.showModal();
+        that.setData({
+            name: name,
+            folderId: folderId,
+            editTip:"修改文件夹"
+        });
+
+    },
+    setRecycle: function (folderId, e) {
         if (!canRefresh) return;
         var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
-        var noteId = e.currentTarget.dataset.noteid;
-        var top = 1 - e.currentTarget.dataset.top;
         wx.request({
-            url: 'https://hellogood.top/hellogood_api/note/setTop.do',//请求地址
+            url: 'https://hellogood.top/hellogood_api/folder/delete.do',//请求地址
             data: {//发送给后台的数据
-                id: noteId,
-                top: top,
+                id: folderId,
                 userId: that.data.userId
             },
             method: "POST",//get为默认方法/POST
@@ -326,76 +363,12 @@ Page({
                     page = 1;
                     that.data.msgList.splice(0, that.data.msgList.length);//清空数组
                     that.setData({msgList: that.data.msgList, show:false});
-                    that.getNoteData();
-                    if (top == 1) {
-                        wx.showToast({
-                            title: '已置顶',
-                            icon: 'success',
-                            duration: 500
-                        })
-                    } else {
-                        wx.showToast({
-                            title: '已取消置顶',
-                            icon: 'success',
-                            duration: 500
-                        })
-                    }
-                } else if (result.status == 'failed') {
-                    if (result.message) {
-                        app.alertBox(result.message)
-                    } else {
-                        app.alertBox('服务器繁忙')
-                    }
-                } else if (result.status == 'error') {
-                    if (result.message) {
-                        app.alertBox(result.message)
-                    } else {
-                        app.alertBox('服务器崩溃')
-                    }
-                }
-            },
-            fail: function (err) {
-                console.log(err);
-                showRequestInfo();
-            },//请求失败
-            complete: function () {
-
-            }//请求完成后执行的函数
-        });
-    },
-    setRecycle: function (noteId, display, e) {
-        if (!canRefresh) return;
-        var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
-        wx.request({
-            url: 'https://hellogood.top/hellogood_api/note/setRecycle.do',//请求地址
-            data: {//发送给后台的数据
-                id: noteId,
-                display: display,
-                userId: that.data.userId
-            },
-            method: "POST",//get为默认方法/POST
-            success: function (res) {
-                //如果在sucess直接写this就变成了wx.request()的this了.必须为getdata函数的this,不然无法重置调用函数
-                var result = res.data
-                if (result.status == 'success') {
-                    that.translateXMsgItem(e.currentTarget.id, 0, 0);
-                    page = 1;
-                    that.data.msgList.splice(0, that.data.msgList.length);//清空数组
-                    that.setData({msgList: that.data.msgList, show:false});
-                    that.getNoteData();
-                    if (display == 0) {
-                        wx.showToast({
-                            title: '已放入回收站',
-                            icon: 'success',
-                            duration: 500
-                        })
-                    } else {
-                        wx.showToast({
-                            title: '已移出回收站',
-                            icon: 'success',
-                            duration: 500
-                        })
-                    }
+                    that.getFolderData();
+                    wx.showToast({
+                        title: '已删除',
+                        icon: 'success',
+                        duration: 500
+                    })
                 } else if (result.status == 'failed') {
                     if (result.message) {
                         app.alertBox(result.message)
@@ -536,38 +509,37 @@ Page({
     },
     deleteReverseTap: function (e) {
         var that = this;
-        var noteId = e.currentTarget.dataset.noteid;
-        var display = 1 - e.currentTarget.dataset.display;
+        var folderId = e.currentTarget.dataset.folderid;
         wx.showModal({
             title: '移出回收站',
-            content: '此操作可让计划在首页展示',
+            content: '此操作可让文件夹在首页展示',
             success: function (res) {
                 if (res.confirm) {
-                    that.setRecycle(noteId, display, e);
+                    that.setRecycle(folderId, e);
                 }
             }
         })
     },
     deleteOverTap: function (e) {
         var that = this;
-        var noteId = e.currentTarget.dataset.noteid;
+        var folderId = e.currentTarget.dataset.folderid;
         wx.showModal({
             title: '彻底删除',
             content: '此操作不可恢复',
             success: function (res) {
                 if (res.confirm) {
-                    that.deleteOne(noteId, e);
+                    that.deleteOne(folderId, e);
                 }
             }
         })
     },
-    deleteOne: function (noteId, e) {
+    deleteOne: function (folderId, e) {
         if (!canRefresh) return;
         var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
         wx.request({
-            url: 'https://hellogood.top/hellogood_api/note/delete.do',//请求地址
+            url: 'https://hellogood.top/hellogood_api/folder/delete.do',//请求地址
             data: {//发送给后台的数据
-                id: noteId,
+                id: folderId,
                 userId: that.data.userId
             },
             method: "POST",//get为默认方法/POST
@@ -579,7 +551,7 @@ Page({
                     page = 1;
                     that.data.msgList.splice(0, that.data.msgList.length);//清空数组
                     that.setData({msgList: that.data.msgList, show:false});
-                    that.getNoteData();
+                    that.getFolderData();
                     wx.showToast({
                         title: '已删除',
                         icon: 'success',
@@ -611,14 +583,13 @@ Page({
 
     deleteMsgItem: function (e) {
         var that = this;
-        var noteId = e.currentTarget.dataset.noteid;
-        var display = 1 - e.currentTarget.dataset.display;
+        var folderId = e.currentTarget.dataset.folderid;
         wx.showModal({
-            title: '删除计划',
-            content: '删除后可在【回收站】中找回',
+            title: '删除文件夹',
+            content: '删除后无法恢复',
             success: function (res) {
                 if (res.confirm) {
-                    that.setRecycle(noteId, display, e);
+                    that.setRecycle(folderId, e);
                 }
             }
         })
@@ -652,8 +623,8 @@ Page({
     },
     onShareAppMessage: function (res) {
         return {
-            title: '橙子计划',
-            desc:'我发现了一款不错的小程序，橙子计划，不仅可以分类管理计划，还有智能提醒功能哟~',
+            title: '橙子文件夹',
+            desc:'我发现了一款不错的小程序，橙子文件夹，不仅可以分类管理文件夹，还有智能提醒功能哟~',
             path: '/pages/index/index',
             imageUrl:'/image/icon_home.png',
             success: function(res) {
@@ -663,5 +634,12 @@ Page({
                 console.log("转发失败:" +res); // 转发失败
             }
         }
+    },
+    getNoteList: function (e) {
+        var folderId = e.currentTarget.dataset.folderid;
+        console.log()
+        wx.navigateTo({
+            url: '../index/index?folderId=' + folderId
+        });
     }
 })

@@ -1,23 +1,25 @@
 Page({
-  data: {
-
-  },
-  onLoad: function () {
-
-  },
+    data: {},
+    onLoad: function () {
+    },
+    folderList: function (e) {
+        wx.navigateTo({
+            url: '../folder/folder'
+        });
+    },
     finishList: function (e) {
         wx.navigateTo({
-            url: '../note/note?finish=1'
+            url: '../myNote/myNote?finish=1&title=已完成计划'
         });
     },
     topList: function (e) {
         wx.navigateTo({
-            url: '../note/note?top=1'
+            url: '../myNote/myNote?top=1&title=置顶计划'
         });
     },
     recycleList: function (e) {
         wx.navigateTo({
-            url: '../note/note?display=0'
+            url: '../myNote/myNote?display=0&title=回收站计划'
         });
     },
     help: function (e) {

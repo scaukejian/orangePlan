@@ -1,6 +1,4 @@
 <view class="container">
-    <!-- 显示标题-->
-    <view class="title-view">{{title}}</view>
     <!-- 计划列表 bindscrolltoupper="onPullDownRefresh"-->
     <view wx:if="{{show}}">
         <scroll-view class='msg-list' style='height:{{height}}px;' scroll-y='{{scrollY}}'
@@ -9,7 +7,7 @@
             <view class='msg-item' style='height:{{item.msg_item_height}}px;' wx:for="{{msgList}}" wx:for-index="index"
                   wx:for-item="item" wx:key="id" animation='{{item.wrapAnimation}}'>
                 <view class='msg' style='height:{{item.msg_height}}px;' id='{{item.id}}' data-noteid="{{item.noteId}}"
-                      data-content="{{item.content}}" animation='{{item.animation}}' bindtap="editNotebtn"
+                      data-content="{{item.content}}" animation='{{item.animation}}'
                       bindtouchstart='ontouchstart' bindtouchmove='ontouchmove' bindtouchend='ontouchend'>
                     <!-- 计划内容 -->
                     <view class="note_contents" id="{{item.id}}">{{item.content}}</view>

@@ -1,96 +1,20 @@
 <view class="container">
+  <!-- 导航栏 -->
+  <view class="navigate-view">
+    <view class="navigate-inline">
+        <view class="beforeName">{{time}}</view>
+      <view class="afterName">
+        <view wx:if="{{showWeather}}"><image style="width: 20px;height: 20px" mode="aspectFit" src="../../image/{{code}}.png"></image> {{weather}} C</view>
+        <view wx:else >{{showWeatherTip}}</view>
+      </view>
+    </view>
+  </view>
 
-    <!-- 显示文件夹-->
-    <view wx:if="{{folderShow}}">
-        <!-- 计划文件夹导航栏 -->
-        <view class="navigate-view">
-            <icon class="search-icon navigate-inline" type="search" size="25" color="#5BCCFC" bindtap="searchIcon"/>
-            <!-- 计划下拉框 -->
-            <picker class="navigate-picker" bindchange="bindPickerChange" value="{{index}}" range="{{folderNameList}}">
-                <view class="navigate-inline folderName">
-                    <view class="beforeFolder">{{beforeFolderName}}</view>
-                    <view class="folder">{{folderNameList[index]}}</view>
-                    <view class="afterFolder">
-                        <view wx:if="{{showWeather}}"><image style="width: 20px;height: 20px" mode="aspectFit" src="../../image/{{code}}.png"></image> {{weather}} C</view>
-                        <view wx:else>{{showWeatherTip}}</view>
-                    </view>
-                </view>
-            </picker>
-            <!--新增按钮-->
-            <view class="addBtn navigate-inline" bindtap="addNotebtn">
-                <text class="addBtnText">+</text>
-            </view>
-            <form bindsubmit="click_ok" id="{{noteId}}">
-                <!--增加修改弹出层-->
-                <view class="note_add_screen" bindtap="hideModal" wx:if="{{showModalStatus}}"></view>
-                <view animation="{{animationData}}" class="note_add_box" wx:if="{{showModalStatus}}">
-                    <!--对话框标题-->
-                    <view class="dialog-title">请输入计划内容</view>
-                    <view class="section">
-                        <input id="note_content_area" bindinput="input_content"
-                                  class="input-style" maxlength="100"
-                               value="{{noteContent}}"/>
-                    </view>
-                    <!--对话框按钮  style="{{height_textarea}}"-->
-                    <view class="line-top" ></view>
-                    <view class="btn-view">
-                        <view class="btn-cancel" bindtap="click_cancel">取 消</view>
-                        <!-- <view class="btn-cancel" id="{{noteId}}" bindtap="click_ok">确 定</view> -->
-                        <button size="default" formType="submit" class="btn-cancel" class="btn-submit">确 定</button>
-                    </view>
-                </view>
-            </form>
-        </view>
+  <scroll-view class='msg-list' style="height: {{height}}px;" scroll-y='true'>
+    <view class='inline-view' wx:for="{{folderList}}" wx:for-index="index" wx:for-item="item" wx:key="id" >
+      <image id="{{item.id}}" bindtap='getNoteList' wx:if ="{{item.name == '日计划' || item.name == '周计划' || item.name == '月计划' || item.name == '年计划'}}" style="width:{{imgWidth}}px;height:{{imgHeight}}px;" mode="aspectFit" src="../../image/{{item.name}}.png"></image>
+      <image id="{{item.id}}" bindtap='getNoteList' wx:else bindtap='getNoteList' style="width:{{imgWidth}}px;height:{{imgHeight}}px;" mode="aspectFit" src="../../image/userPlan.png"></image>
+      <view id="{{item.id}}" bindtap='getNoteList' style="text-align: center;margin-top: 0px;padding-top: 0px">{{item.name}}</view>
     </view>
-    <!-- 显示搜索框-->
-    <view wx:if="{{searchShow}}">
-        <!-- 计划文件夹导航栏 -->
-        <view class="navigate-view">
-            <!--搜索组合-->
-            <view class="back-icon navigate-inline" bindtap="backIcon">
-                <image style="width: 20px;height: 20px" mode="aspectFit" src="../../image/back.png"></image>
-            </view>
-                <input class="navigate-input navigate-inline" maxlength="100" auto-focus
-                   bindinput="searchInput"/>
-            <view class="searchBtn navigate-inline" bindtap="searchNotebtn">
-                <text class="searchNoteText">搜索</text>
-            </view>
-        </view>
-    </view>
-    <!-- 计划列表 bindscrolltoupper="onPullDownRefresh"-->
-    <view wx:if="{{show}}">
-        <scroll-view class='msg-list' style='height:{{height}}px;' scroll-y='{{scrollY}}'
-                       scroll-top="{{scrollTop}}"  bindscroll="scroll" bindscrolltolower="pullUpLoad"
-        >
-            <view class='msg-item' style='height:{{item.msg_item_height}}px;' wx:for="{{msgList}}" wx:for-index="index" wx:for-item="item" wx:key="id" animation='{{item.wrapAnimation}}'>
-                <view class='msg'  style='height:{{item.msg_height}}px;' id='{{item.id}}'  data-noteid="{{item.noteId}}" data-content="{{item.content}}" animation='{{item.animation}}'  bindtap="editNotebtn" bindtouchstart='ontouchstart' bindtouchmove='ontouchmove' bindtouchend='ontouchend'>
-                    <!-- 计划内容 -->
-                    <view class="note_contents" id="{{item.id}}">{{item.content}}</view>
-                    <!-- 计划时间 -->
-                    <view class="msg-text" >{{index + 1}}、{{item.updateTime}}
-                        <!-- 置顶/收藏按钮 -->
-                        <image class="bookmark" style="display: {{item.bookmark_display}}" mode="aspectFit" src="../../image/bookmark.png"></image>
-                        <image class="tick" style="display: {{item.tick_display}}" mode="aspectFit" src="../../image/tick.png"></image>
-                    </view>
-                </view>
-                <view class='msg-menu'>
-                    <view id='{{item.id}}' style='height:{{item.msg_menu_height}}px;line-height:{{item.msg_menu_line_height}}px;' data-noteid="{{item.noteId}}" data-display="{{item.display}}" class='menu-delete' bindtap='onDeleteMsgTap'>
-                        删除
-                    </view>
-                    <view id='{{item.id}}' style='height:{{item.msg_menu_height}}px;line-height:{{item.msg_menu_line_height}}px;' data-noteid="{{item.noteId}}" data-top="{{item.top}}" class='menu-Top' bindtap='changeTop'>
-                        {{item.top == 1 ? "取消置顶" : "置顶"}}
-                    </view>
-                    <view id='{{item.id}}' style='height:{{item.msg_menu_height}}px;line-height:{{item.msg_menu_line_height}}px;' data-noteid="{{item.noteId}}" data-finish="{{item.finish}}" class='menu-finish' bindtap='changeFinish'>
-                        {{item.finish == 1 ? "取消完成" : "完成"}}
-                    </view>
-                </view>
-            </view>
-            <!--<view  style="text-align: center;font-size:14px;margin: 3px auto;color:#10aeff;{{scanDisplay}}">
-                看完计划咯哟~
-            </view>-->
-        </scroll-view>
-    </view>
-    <view wx:else style="text-align: center;margin-top: 50%;">
-        {{noteTip}}
-    </view>
+  </scroll-view>
 </view>

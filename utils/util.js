@@ -39,8 +39,43 @@ function strlen(str){
     }
     return len;
 }
+
+//首页时间格式化
+function dateformat(now) {
+    var year = now.getFullYear();
+    var month = now.getMonth() + 1;
+    var day = now.getDate();
+    var h=now.getHours();
+    var m=now.getMinutes();
+    var s=now.getSeconds();
+    if (h < 10) {
+        h = "0" + h;
+    }
+    if (m < 10) {
+        m = "0" + m;
+    }
+    if (s < 10) {
+        s = "0" + s;
+    }
+    var str = year + "年" + month + "月" + day + "日 " + h + ":" + m + ":" + s;
+    return str;
+}
+
+function getTime(that) {
+    var now = new Date();
+    // 渲染倒计时时钟
+    that.setData({
+        time: dateformat(now)
+    });
+    //每秒渲染一次
+    setTimeout(function () {
+        getTime(that);
+    }, 1000)
+}
+
 module.exports = {
     formatTime: formatTime,
     sleep: sleep,
-    strlen:strlen
+    strlen:strlen,
+    getTime:getTime
 }
