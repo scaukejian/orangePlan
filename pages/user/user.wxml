@@ -1,5 +1,5 @@
 <view class="container user-list">
-  <view class="myInfo">
+  <view class="myInfo" bindtap="getUserInfo">
     <view class="headPhoto inline-view">
       <image class="headPhotoImg"  bindtap="qrCodePreview" data-src="{{user.imgUrl}}" mode="aspectFit" src="{{user.imgUrl}}"></image>
     </view>

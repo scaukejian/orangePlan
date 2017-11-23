@@ -1,0 +1,31 @@
+<view class="container user-list">
+  <view class="myInfo">
+    <view class="headPhoto inline-view">
+      <image class="headPhotoImg"  bindtap="qrCodePreview" data-src="{{user.imgUrl}}" mode="aspectFit" src="{{user.imgUrl}}"></image>
+    </view>
+    <view class="user inline-view">
+      <view class="userName">{{user.userName}}</view>
+      <view class="userID">ID:{{user.userCode}}</view>
+    </view>
+    <view class="endExtend inline-view">
+      <view wx:if="{{user.qRCodeUrl}}">
+        <image class="qrCode" bindtap="qrCodePreview" data-src="https://hellogood.top/hellogood_api/picture/download.do?fileName={{user.qRCodeUrl}}" mode="aspectFit" src="https://hellogood.top/hellogood_api/picture/download.do?fileName={{user.qRCodeUrl}}"></image>
+      </view>
+    </view>
+  </view>
+
+  <view class="userInfo">
+    <view class="info">性别：<text class="msg">{{user.sex}}</text></view>
+    <view class="info">手机：<text class="msg">{{user.phone}}</text></view>
+    <view class="info">微信：<text class="msg">{{user.weixinName}}</text></view>
+    <view class="info">公司：<text class="msg">{{user.company}}</text></view>
+    <view class="info">职位：<text class="msg">{{user.job}}</text></view>
+    <view class="info">邮箱：<text class="msg">{{user.email}}</text></view>
+    <view class="info">个性签名：<text class="msg">{{user.characteristicSignature}}</text></view>
+  </view>
+  <!--编辑按钮-->
+  <view class="editBtn" >
+    <text class="editBtnText">修改</text>
+  </view>
+
+</view>

@@ -60,10 +60,5 @@ Page({
             current: imageList[0], // 当前显示图片的http链接
             urls: imageList
         })
-    },
-    getUserInfo: function () {
-        wx.navigateTo({
-            url: '../userInfo/userInfo'
-        });
     }
 })

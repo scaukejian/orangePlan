@@ -1,0 +1,76 @@
+.user-list {
+  display: flex;
+  flex-direction: column;
+}
+.myInfo {
+  padding: 2rpx;
+  border-bottom: 1px #e6e6e6 solid;
+  display: flex;
+  height: 62px;
+  line-height:62px;
+}
+.inline-view {
+  display: inline-block;
+}
+.headPhoto {
+  padding: 3px;
+  width: 20%;
+}
+.headPhotoImg{
+  border-radius: 50%;
+  width: 55px;
+  height: 55px;
+}
+
+.user {
+  width: 60%;
+  height: 22px;
+  line-height:22px;
+  padding-left: 5px;
+}
+.userName {
+  padding-top: 10px;
+  font-weight: bold;
+  color: #10aeff;
+}
+.userID {
+  font-size: 14px;
+  color: #999;
+}
+.endExtend {
+  width: 20%;
+  text-align: right;
+  padding-right: 7px;
+  color: #999;
+}
+.qrCode{
+  width: 58px;
+  height: 58px;
+  padding-top: 1px;
+}
+.userInfo {
+  margin: 10px 0px;
+  line-height:30px;
+}
+.info{
+  padding: 10px;
+}
+.msg {
+  color:#10aeff;
+}
+.editBtn{
+  width:15%;
+  padding-bottom: 2px;
+  background-color: #10aeff;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  opacity: 0.8;
+  z-index: 100;
+  border-radius: 20px;
+  padding-left: 20px;
+}
+.editBtnText {
+  color: #FFF;
+  font-size: 20px;
+}
