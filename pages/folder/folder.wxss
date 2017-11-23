@@ -51,9 +51,10 @@
   overflow: auto;
 }
 
+
 .folder_contents {
   position: absolute;
-  top: 7px;
+  top: 12px;
   padding-left: 8px;
   padding-right: 8px;
   word-break: break-all;
@@ -150,6 +151,7 @@
   z-index: 1000;
   color: #fff;
 }
+
 
 .folder_add_box {
   width: 100%;

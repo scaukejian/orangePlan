@@ -1,11 +1,17 @@
 <view class="container user-list">
   <view class="myInfo">
-    <view class="headPhoto inline-view"><image style="width: 60px;height: 60px" mode="aspectFit" src="../../image/0.png"></image></view>
-    <view class="user inline-view">
-      <view class="userName">柯坚</view>
-      <view class="userID">ID:522564232</view>
+    <view class="headPhoto inline-view">
+      <image class="headPhotoImg"  bindtap="qrCodePreview" data-src="{{user.imgUrl}}" mode="aspectFit" src="{{user.imgUrl}}"></image>
     </view>
-    <view class="endExtend inline-view"> > </view>
+    <view class="user inline-view">
+      <view class="userName">{{user.userName}}</view>
+      <view class="userID">ID:{{user.userCode}}</view>
+    </view>
+    <view class="endExtend inline-view">
+      <view wx:if="{{user.qRCodeUrl}}">
+      <image class="qrCode" bindtap="qrCodePreview" data-src="https://hellogood.top/hellogood_api/picture/download.do?fileName={{user.qRCodeUrl}}" mode="aspectFit" src="https://hellogood.top/hellogood_api/picture/download.do?fileName={{user.qRCodeUrl}}"></image>
+      </view>
+      </view>
   </view>
 
   <view class="note">

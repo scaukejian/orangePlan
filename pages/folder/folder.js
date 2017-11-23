@@ -139,10 +139,10 @@ Page({
                             msg.folderId = folder.id;
                             msg.name = folder.name;
                             msg.userId = folder.userId;
-                            msg.msg_item_height = 38+increaseNum1;
-                            msg.msg_height = 38+increaseNum1;
-                            msg.msg_menu_height = 37+increaseNum1;
-                            msg.msg_menu_line_height = 38+increaseNum1;
+                            msg.msg_item_height = 50+increaseNum1;
+                            msg.msg_height = 50+increaseNum1;
+                            msg.msg_menu_height = 49+increaseNum1;
+                            msg.msg_menu_line_height = 50+increaseNum1;
                             var length = utils.strlen(folder.name);
                             if (folder.name != null && length > (37 + increaseNum2)) {
                                 var rowNum = Math.floor(length /  (37 + increaseNum2));

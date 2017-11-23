@@ -148,12 +148,7 @@ Page({
                         var windowHeight = app.globalData.deviceInfo.windowHeight;
                         var windowWidth = app.globalData.deviceInfo.windowWidth;
                         var brand = app.globalData.deviceInfo.brand;
-                        var height;
-                        if (brand.indexOf("Meizu") != -1) {
-                            height = windowHeight - 79;
-                        } else {
-                            height = windowHeight - 31;
-                        }
+                        var height = windowHeight;
                         //that.data.msgList.splice(0, that.data.msgList.length);//清空数组（切换计划的时候清空缓存数据）
                         var increaseNum1 = 4;
                         var increaseNum2 = 7;

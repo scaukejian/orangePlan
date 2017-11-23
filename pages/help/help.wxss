@@ -1,29 +1,29 @@
 .version {
-  margin: 10px 0px;
+  margin: 15px 0px;
   width:100%;
-  font-size: 20px;
+  font-size: 22px;
   text-align: center;
   color: #10aeff;
 }
 .introduction {
   border-top: 1px #e6e6e6 solid;
   border-bottom: 1px #e6e6e6 solid;
-  font-size: 14px;
+  font-size: 16px;
   text-align: left;
   padding: 5px 20px;
   word-break: break-all;
-  line-height: 30px;
+  line-height: 32px;
 }
 .dev {
-  margin: 15px 0px 10px 0px;
+  margin: 20px 0px 20px 0px;
   width:100%;
-  font-size: 14px;
+  font-size: 16px;
   text-align: center;
 }
 .email {
   margin: 10px 0px;
   width:100%;
-  font-size: 14px;
+  font-size: 16px;
   text-align: center;
 }
 .blue {

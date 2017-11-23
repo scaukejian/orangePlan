@@ -38,6 +38,22 @@
   
 }
 
+.addBtn{
+  width:10%;
+  padding-bottom: 4px;
+  background-color: #10aeff;
+  border-radius: 50%;
+
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  opacity: 0.8;
+  z-index: 100;
+}
+.addBtnText {
+  color: #FFF;
+  font-size: 25px;
+}
 .add_view {
   position: fixed;
   bottom: 0rpx;
@@ -120,10 +136,6 @@
   border-radius: 5px;
   padding: 10px;
 }
-.navigate-input{
-  padding: 0px;
-  margin: 0px;
-}
 .navigate-view {
   white-space: nowrap;
   display: flex;
@@ -182,21 +194,14 @@
   border-right:1px #E6E6E6 solid;
   border-radius: 2px;
 }
-.addBtn{
-  width:10%;
-  padding: 0px;
-}
-.addBtnText {
-  font-size: 40px;
-}
 .navigate-input {
-  width:80%;
-  text-align: left;
-  border-right:1px #E6E6E6 solid;
-  padding:0px 0px 0px 5px;
-  margin: 0px;
-  font-size: 18px;
-
+  width:95%;
+  text-align: center;
+  border-radius: 20px;
+  padding-left:10px;
+  margin: 2px auto 0px;
+  font-size: 14px;
+  border:1px #5BCCFC solid;
 }
 .searchBtn {
   width:20%;
@@ -209,6 +214,7 @@
  }
 
 .msg-list {
+
 }
 
 .msg-item {
@@ -218,6 +224,7 @@
   left:0;
   top:0;
   overflow: auto;
+
 }
 
 .msg {
@@ -294,5 +301,3 @@
   width: 15px;
   height:15px;
 }
-
-

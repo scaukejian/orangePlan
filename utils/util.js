@@ -63,9 +63,10 @@ function dateformat(now) {
 
 function getTime(that) {
     var now = new Date();
+    var week = " 周"+"日一二三四五六".charAt(new Date().getDay());
     // 渲染倒计时时钟
     that.setData({
-        time: dateformat(now)
+        time: dateformat(now) + week
     });
     //每秒渲染一次
     setTimeout(function () {

@@ -15,27 +15,8 @@ Page({
     },
     onLoad: function () {
         var that = this;
-
         //调用上面定义的递归函数，一秒一刷新时间
         utils.getTime(that);
-        //加载完计划列表后，请求获取天气数据
-        wx.getLocation({
-            type: 'wgs84',
-            success: function (res) {
-                var latitude = res.latitude;//纬度，浮点数，范围为-90~90，负数表示南纬
-                var longitude = res.longitude;//经度，浮点数，范围为-180~180，负数表示西经
-                var location = latitude + ":" + longitude;
-                wx.setStorageSync('location', location);
-                that.getWeather(location);//获取天气
-            },
-            fail: function (err) {
-                console.log(err);
-                that.setData({
-                    showWeatherTip: "获取定位失败"
-                })
-            }
-        })
-
         if (!wx.getStorageSync('userId')) {
             app.getUserInfo(function (userInfoData) {
                 that.setData({
@@ -65,17 +46,60 @@ Page({
                     imgWidth: imgWidth,
                     imgHeight: imgHeight
                 });
+
+                //加载完计划列表后，请求获取天气数据
+                wx.getLocation({
+                    type: 'wgs84',
+                    success: function (res) {
+                        var latitude = res.latitude;//纬度，浮点数，范围为-90~90，负数表示南纬
+                        var longitude = res.longitude;//经度，浮点数，范围为-180~180，负数表示西经
+                        var location = latitude + ":" + longitude;
+                        wx.setStorageSync('location', location);
+                        that.getWeather(location);//获取天气
+                    },
+                    fail: function (err) {
+                        console.log(err);
+                        that.setData({
+                            showWeatherTip: "获取定位失败"
+                        })
+                    }
+                })
+
             })
         } else {
             that.setData({
-                userId: wx.getStorageSync('userId'),
+                userId: wx.getStorageSync('userId')
             });
             that.getFolderData();
+            var location = wx.getStorageSync('location');
+            if (location == undefined || location.length <= 0) {
+                //加载完计划列表后，请求获取天气数据
+                wx.getLocation({
+                    type: 'wgs84',
+                    success: function (res) {
+                        var latitude = res.latitude;//纬度，浮点数，范围为-90~90，负数表示南纬
+                        var longitude = res.longitude;//经度，浮点数，范围为-180~180，负数表示西经
+                        location = latitude + ":" + longitude;
+                        wx.setStorageSync('location', location);
+                    },
+                    fail: function (err) {
+                        console.log(err);
+                        that.setData({
+                            showWeatherTip: "获取定位失败"
+                        })
+                    }
+                })
+            }
+            that.getWeather(location);//获取天气
         }
-
     },
     onShow: function () {
         this.onLoad();
+    },
+    onPullDownRefresh: function () {
+        wx.switchTab({
+            url: 'index'
+        });
     },
     getFolderData: function () {//定义函数名称
         var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了

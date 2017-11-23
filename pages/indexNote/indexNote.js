@@ -67,7 +67,6 @@ Page({
     onLoad: function (options) {
         //调用应用实例的方法获取全局数据
         var that = this;
-        console.log(options.folderId);
         if (options.folderId == undefined || options.folderId < 0) return;
         that.setData({
             userId: wx.getStorageSync('userId')
@@ -165,12 +164,7 @@ Page({
                         var windowHeight = app.globalData.deviceInfo.windowHeight;
                         var windowWidth = app.globalData.deviceInfo.windowWidth;
                         var brand = app.globalData.deviceInfo.brand;
-                        var height;
-                        if (brand.indexOf("Meizu") != -1) {
-                            height = windowHeight - 79;
-                        } else {
-                            height = windowHeight - 31;
-                        }
+                        var height = windowHeight - 21;
                         //that.data.msgList.splice(0, that.data.msgList.length);//清空数组（切换计划的时候清空缓存数据）
                         var increaseNum1 = 4;
                         var increaseNum2 = 7;
@@ -182,6 +176,8 @@ Page({
                                 increaseNum2 = 5;
                             }
                         }
+                       /*  */
+                        var colorArr = ["#EAEBED"];
                         for (var i = 0; i < tempList.length; i++) {
                             var note = tempList[i];
                             var msg = {};
@@ -196,6 +192,11 @@ Page({
                             msg.msg_height = 58+increaseNum1;
                             msg.msg_menu_height = 57+increaseNum1;
                             msg.msg_menu_line_height = 58+increaseNum1;
+                          /*  if (i % 2 == 0) {
+                                msg.backgroundColor = "#EAEBED";
+                            } else {
+                                msg.backgroundColor = "#FFF";
+                            }*/
                             var length = utils.strlen(note.content);
                             if (note.content != null && length > (37 + increaseNum2)) {
                                 var rowNum = Math.floor(length /  (37 + increaseNum2));
@@ -601,21 +602,12 @@ Page({
         that.getNoteData(currentFolderId, searchInputInfo);
     },
     searchInput: function (e) {
-        searchInputInfo = e.detail.value;
-    },
-    searchNotebtn: function () {
         var that = this;
-        that.setData({
-            folderShow: true,
-            searchShow: false
-        })
-        if (searchInputInfo != null) {
-            page = 1;
-            that.data.msgList.splice(0, that.data.msgList.length);//清空数组
-            that.setData({msgList: that.data.msgList, show:false});
-            that.getNoteData(currentFolderId, searchInputInfo);
-            searchInputInfo = "";
-        }
+        searchInputInfo = e.detail.value;
+        page = 1;
+        that.data.msgList.splice(0, that.data.msgList.length);//清空数组
+        that.setData({msgList: that.data.msgList, show:false});
+        that.getNoteData(currentFolderId, searchInputInfo);
     },
     ontouchstart: function (e) {
         if (this.showState === 1) {

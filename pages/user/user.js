@@ -1,6 +1,30 @@
+var app = getApp();
 Page({
-    data: {},
+    data: {
+        user: {},
+        qRCodeUrl:''
+    },
     onLoad: function () {
+        var that = this;
+        if (!wx.getStorageSync('user')) {
+            app.getUserInfo(function (userInfoData) {
+                that.setData({
+                    user: userInfoData.data
+                });
+            })
+        } else {
+            that.setData({
+                user: wx.getStorageSync('user')
+            });
+        }
+    },
+    onShow: function () {
+        this.onLoad();
+    },
+    onPullDownRefresh: function () {
+        wx.switchTab({
+            url: 'user'
+        });
     },
     folderList: function (e) {
         wx.navigateTo({
@@ -26,5 +50,15 @@ Page({
         wx.navigateTo({
             url: '../help/help'
         });
+    },
+    //图片点击事件
+    qrCodePreview:function(event){
+        var src = event.currentTarget.dataset.src;//获取data-src
+        var imageList = [src];
+        //图片预览
+        wx.previewImage({
+            current: imageList[0], // 当前显示图片的http链接
+            urls: imageList
+        })
     }
 })

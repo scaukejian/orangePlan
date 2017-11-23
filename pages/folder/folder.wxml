@@ -34,7 +34,7 @@
                           data-folderid="{{item.folderId}}"  bindtap="getNoteList"
                           data-name="{{item.name}}">
                         <!-- 计划内容 -->
-                        <view class="folder_contents" id="{{item.id}}">{{index + 1}}、{{item.name}}</view>
+                        <view class="folder_contents" id="{{item.id}}">{{index + 1}}、{{item.name}} <text style="color:#5BCCFC">【系统】</text></view>
                     </view>
                 </view>
             </view>

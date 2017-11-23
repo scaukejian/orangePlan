@@ -1,6 +1,10 @@
 Page({
-  data: {
-  },
-  onLoad: function () {
-  }
+    data: {},
+    onLoad: function () {
+    },
+    onPullDownRefresh: function () {
+        wx.redirectTo({
+            url: '../help/help'
+        });
+    }
 })

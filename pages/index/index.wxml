@@ -1,5 +1,6 @@
 <view class="container">
   <!-- 导航栏 -->
+  <!--<image class="backImg" src="../../image/index.jpg"  mode="scaleToFill"></image>-->
   <view class="navigate-view">
     <view class="navigate-inline">
         <view class="beforeName">{{time}}</view>
@@ -12,7 +13,7 @@
 
   <scroll-view class='msg-list' style="height: {{height}}px;" scroll-y='true'>
     <view class='inline-view' wx:for="{{folderList}}" wx:for-index="index" wx:for-item="item" wx:key="id" >
-      <image id="{{item.id}}" bindtap='getNoteList' wx:if ="{{item.name == '日计划' || item.name == '周计划' || item.name == '月计划' || item.name == '年计划'}}" style="width:{{imgWidth}}px;height:{{imgHeight}}px;" mode="aspectFit" src="../../image/{{item.name}}.png"></image>
+      <image id="{{item.id}}" bindtap='getNoteList' wx:if ="{{item.name == '日计划' || item.name == '周计划' || item.name == '月计划' || item.name == '年计划'}}" style="width:{{imgWidth}}px;height:{{imgHeight}}px;" mode="aspectFit" src="../../image/note-{{item.id}}.png"></image>
       <image id="{{item.id}}" bindtap='getNoteList' wx:else bindtap='getNoteList' style="width:{{imgWidth}}px;height:{{imgHeight}}px;" mode="aspectFit" src="../../image/userPlan.png"></image>
       <view id="{{item.id}}" bindtap='getNoteList' style="text-align: center;margin-top: 0px;padding-top: 0px">{{item.name}}</view>
     </view>

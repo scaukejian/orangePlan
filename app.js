@@ -41,9 +41,7 @@ App({
                                         if (data.data.status == "success") {
                                             wx.setStorageSync('openId', data.data.data.openId);
                                             wx.setStorageSync('userId', data.data.data.userId);
-                                            wx.setStorageSync('folderNameList', data.data.folderNameList);
-                                            wx.setStorageSync('beforeFolderList', data.data.beforeFolderList);
-                                            wx.setStorageSync('firstFolderId', data.data.firstFolderId);
+                                            wx.setStorageSync('user', data.data.data);
                                             wx.setStorageSync('folderList', data.data.folderList);
                                             that.globalData.userInfo = data.data;
                                             typeof cb == "function" && cb(that.globalData.userInfo)

@@ -13,11 +13,17 @@
   display: inline-block;
 }
 .headPhoto {
+  padding: 3px;
   width: 20%;
-  border-radius: 50%;
 }
+.headPhotoImg{
+  border-radius: 50%;
+  width: 55px;
+  height: 55px;
+}
+
 .user {
-  width: 70%;
+  width: 60%;
   height: 22px;
   line-height:22px;
   padding-left: 5px;
@@ -32,17 +38,22 @@
   color: #999;
 }
 .endExtend {
-  width: 10%;
+  width: 20%;
   text-align: right;
   padding-right: 7px;
   color: #999;
 }
+.qrCode{
+  width: 58px;
+  height: 58px;
+  padding-top: 1px;
+}
 .note {
   margin: 10px 0px;
-  line-height: 40px;
+  line-height:62px;
 }
 .other {
-  line-height: 40px;
+  line-height:62px;
 }
 .folder,.back {
   border-top: 1px #e6e6e6 solid;

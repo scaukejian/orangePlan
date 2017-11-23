@@ -15,7 +15,7 @@
 .beforeName {
     position: fixed;
     top: 2px;
-    left: 3px;
+    left: 5px;
     overflow: hidden;
     font-size: 14px;
 }
@@ -24,7 +24,7 @@
     display: inline-block;
     position: fixed;
     top: 1px;
-    right: 3px;
+    right: 5px;
     overflow: hidden;
 }
 .msg-item {
@@ -33,4 +33,12 @@
 }
 .inline-view {
     display: inline-block;
+}
+.backImg {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: hidden;
 }

@@ -1,11 +1,11 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/indexNote/indexNote",
     "pages/user/user",
+    "pages/indexNote/indexNote",
+    "pages/folder/folder",
     "pages/myNote/myNote",
-    "pages/help/help",
-    "pages/folder/folder"
+    "pages/help/help"
   ],
   "window": {
     "navigationBarTextStyle": "white",
@@ -21,12 +21,12 @@
     "backgroundColor": "#ffffff",
     "list": [{
       "pagePath": "pages/index/index",
-      "iconPath": "image/book.png",
-      "selectedIconPath": "image/pen-select.png",
+      "iconPath": "image/note.png",
+      "selectedIconPath": "image/note.png",
       "text": "首页"
     },{
       "pagePath": "pages/user/user",
-      "iconPath": "image/user.png",
+      "iconPath": "image/user-select.png",
       "selectedIconPath": "image/user-select.png",
       "text": "我的"
     } ]
