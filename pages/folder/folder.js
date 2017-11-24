@@ -637,7 +637,6 @@ Page({
     },
     getNoteList: function (e) {
         var folderId = e.currentTarget.dataset.folderid;
-        console.log()
         wx.navigateTo({
             url: '../index/index?folderId=' + folderId
         });

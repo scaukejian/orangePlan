@@ -130,7 +130,6 @@ Page({
         that.getNoteData(currentFolderId, searchInputInfo);
     },
     getNoteData: function (folderId, searchContent) {//定义函数名称
-        console.log(folderId);
         canRefresh = false;
         var that = this;   // 这个地方非常重要，重置data{}里数据时候setData方法的this应为以及函数的this, 如果在下方的sucess直接写this就变成了wx.request()的this了
         wx.request({
@@ -152,7 +151,6 @@ Page({
                     that.setData({
                         noteList: res.data.dataList
                     });
-                    console.log(that.data.noteList.length);
                     if (that.data.noteList != null && that.data.noteList.length > 0) {
                         that.setData({
                             show: true

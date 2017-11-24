@@ -1,8 +1,10 @@
+var utils = require('../../utils/util.js')
 var app = getApp();
 Page({
     data: {
         user: {},
-        qRCodeUrl:''
+        qRCodeUrl:'',
+        birthday:''
     },
     onLoad: function () {
         var that = this;
@@ -15,6 +17,47 @@ Page({
         } else {
             that.setData({
                 user: wx.getStorageSync('user')
+            });
+        }
+        if (that.data.user != null && that.data.user.birthday != undefined) {
+            that.setData({
+                birthday: utils.formatDate(that.data.user.birthday)
+            });
+        }
+        if (that.data.user.openId != undefined) {
+            wx.request({
+                url: 'https://hellogood.top/hellogood_api/mina/getQRCodeUrl.do',//请求地址
+                header: {
+                    'openId': that.data.user.openId
+                },
+                method: "GET",//get为默认方法/POST
+                success: function (res) {
+                    //如果在sucess直接写this就变成了wx.request()的this了.必须为getdata函数的this,不然无法重置调用函数
+                    var result = res.data
+                    if (result.status == 'success') {
+                        that.setData({
+                            qRCodeUrl: res.data.data
+                        });
+                    } else if (result.status == 'failed') {
+                        if (result.message) {
+                            app.alertBox(result.message)
+                        } else {
+                            app.alertBox('服务器繁忙')
+                        }
+                    } else if (result.status == 'error') {
+                        if (result.message) {
+                            app.alertBox(result.message)
+                        } else {
+                            app.alertBox('服务器崩溃')
+                        }
+                    }
+                },
+                fail: function (err) {
+                    showRequestInfo();
+                },//请求失败
+                complete: function () {
+
+                }//请求完成后执行的函数
             });
         }
     },
@@ -49,6 +92,11 @@ Page({
     help: function (e) {
         wx.navigateTo({
             url: '../help/help'
+        });
+    },
+    edit: function (e) {
+        wx.navigateTo({
+            url: '../userInfoEdit/userInfoEdit'
         });
     },
     //图片点击事件

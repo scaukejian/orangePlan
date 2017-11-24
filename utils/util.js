@@ -9,6 +9,14 @@ function formatTime(date) {
 
     return [year, month, day].map(formatNumber).join('/') + ' ' + [hour, minute, second].map(formatNumber).join(':');
 }
+function formatDate(time) {
+    var date = new Date(time);
+    var year = date.getFullYear()
+    var month = date.getMonth() + 1
+    var day = date.getDate()
+
+    return [year, month, day].map(formatNumber).join('-');
+}
 
 function formatNumber(n) {
     n = n.toString()
@@ -78,5 +86,6 @@ module.exports = {
     formatTime: formatTime,
     sleep: sleep,
     strlen:strlen,
-    getTime:getTime
+    getTime:getTime,
+    formatDate:formatDate
 }

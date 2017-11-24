@@ -1,8 +1,9 @@
 {
   "pages": [
-    "pages/userInfo/userInfo",
     "pages/index/index",
     "pages/user/user",
+    "pages/userInfo/userInfo",
+    "pages/userInfoEdit/userInfoEdit",
     "pages/indexNote/indexNote",
     "pages/folder/folder",
     "pages/myNote/myNote",
@@ -38,5 +39,5 @@
     "uploadFile": 10000,
     "downloadFile": 10000
   },
-  "debug": true
+  "debug": false
 }

@@ -1,8 +1,10 @@
+var utils = require('../../utils/util.js')
 var app = getApp();
 Page({
     data: {
         user: {},
-        qRCodeUrl:''
+        qRCodeUrl:'',
+        birthday:'请选择'
     },
     onLoad: function () {
         var that = this;
@@ -15,6 +17,47 @@ Page({
         } else {
             that.setData({
                 user: wx.getStorageSync('user')
+            });
+        }
+        if (that.data.user != null && that.data.user.birthday != undefined) {
+            that.setData({
+                birthday: utils.formatDate(that.data.user.birthday)
+            });
+        }
+        if (that.data.user.openId != undefined) {
+            wx.request({
+                url: 'https://hellogood.top/hellogood_api/mina/getQRCodeUrl.do',//请求地址
+                header: {
+                    'openId': that.data.user.openId
+                },
+                method: "GET",//get为默认方法/POST
+                success: function (res) {
+                    //如果在sucess直接写this就变成了wx.request()的this了.必须为getdata函数的this,不然无法重置调用函数
+                    var result = res.data
+                    if (result.status == 'success') {
+                        that.setData({
+                            qRCodeUrl: res.data.data
+                        });
+                    } else if (result.status == 'failed') {
+                        if (result.message) {
+                            app.alertBox(result.message)
+                        } else {
+                            app.alertBox('服务器繁忙')
+                        }
+                    } else if (result.status == 'error') {
+                        if (result.message) {
+                            app.alertBox(result.message)
+                        } else {
+                            app.alertBox('服务器崩溃')
+                        }
+                    }
+                },
+                fail: function (err) {
+                    showRequestInfo();
+                },//请求失败
+                complete: function () {
+
+                }//请求完成后执行的函数
             });
         }
     },
@@ -59,6 +102,51 @@ Page({
         wx.previewImage({
             current: imageList[0], // 当前显示图片的http链接
             urls: imageList
+        })
+    },
+    bindDateChange: function(e) {
+        this.setData({
+            birthday: e.detail.value
+        })
+    },
+    formSubmit: function(e) {
+        var that = this;
+        var formData = e.detail.value;
+        if (formData.birthday == '请选择') formData.birthday = '';
+        wx.request({
+            url: 'https://hellogood.top/hellogood_api/mina/save.do',
+            data: formData,
+            method: "POST",//get为默认方法/POST
+            header: {
+                'Content-Type': 'application/json'
+            },
+            success: function(res) {
+                var result = res.data
+                if (result.status == 'success') {
+                    wx.showToast({
+                        title: '保存成功',
+                        icon: 'success',
+                        duration: 500
+                    })
+                    that.setData({
+                        user: result.data
+                    });
+                    wx.setStorageSync('user', result.data);
+                } else if (result.status == 'failed') {
+                    if (result.message) {
+                        app.alertBox(result.message)
+                    } else {
+                        app.alertBox('服务器繁忙')
+                    }
+                } else if (result.status == 'error') {
+                    if (result.message) {
+                        app.alertBox(result.message)
+                    } else {
+                        app.alertBox('服务器崩溃')
+                    }
+                }
+
+            }
         })
     }
 })

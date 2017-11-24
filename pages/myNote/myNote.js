@@ -105,7 +105,6 @@ Page({
                 pageSize: pageSize,
                 mini: mini
         }
-        console.log(that.data.finish);
         if (that.data.finish != undefined){
             data.finish = that.data.finish;
             data.display = 1;

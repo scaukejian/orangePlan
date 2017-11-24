@@ -59,7 +59,7 @@
   color:#10aeff;
 }
 .editBtn{
-  width:15%;
+  width:50px;
   padding-bottom: 2px;
   background-color: #10aeff;
   position: fixed;
@@ -68,7 +68,7 @@
   opacity: 0.8;
   z-index: 100;
   border-radius: 20px;
-  padding-left: 20px;
+  padding-left: 10px;
 }
 .editBtnText {
   color: #FFF;

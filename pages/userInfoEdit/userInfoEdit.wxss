@@ -50,17 +50,17 @@
 }
 .userInfo {
   margin: 10px 0px;
-  line-height:30px;
 }
 .info{
   padding: 10px;
+  line-height:30px;
+  position: relative;
 }
 .msg {
   color:#10aeff;
 }
-.editBtn{
-  width:15%;
-  padding-bottom: 2px;
+.saveBtn{
+  width:70px;
   background-color: #10aeff;
   position: fixed;
   bottom: 20px;
@@ -68,9 +68,45 @@
   opacity: 0.8;
   z-index: 100;
   border-radius: 20px;
-  padding-left: 20px;
-}
-.editBtnText {
+  padding: 0px;
   color: #FFF;
+}
+.radio-group {
+  display: inline-block;
+}
+.input {
+  text-align: left;
+  border-radius: 20px;
+  padding:5px 0px 5px 10px;
+  margin: 2px auto 0px;
   font-size: 20px;
+  border:1px #5BCCFC solid;
+  display: inline-block;
+  position: absolute;
+  top:5px;
+}
+.inputArea {
+  text-align: left;
+  border-radius: 20px;
+  padding:5px 0px 5px 10px;
+  margin: 2px 30px 0px 0px;
+  font-size: 20px;
+  border:1px #5BCCFC solid;
+  display: inline-block;
+  position: absolute;
+  top:5px;
+}
+.dateInput {
+  text-align: left;
+  border-radius: 20px;
+  padding:5px 5px 5px 10px;
+  margin: 2px auto 0px;
+  font-size: 20px;
+  display: inline-block;
+  position: absolute;
+  top:3px;
+  left:70px;
+}
+.dateHidden {
+  display: none;
 }
