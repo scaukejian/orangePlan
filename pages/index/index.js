@@ -11,7 +11,8 @@ Page({
         showWeatherTip: '',
         weather: '',
         code: 99,
-        time: ''
+        time: '',
+        showFloder:false
     },
     onLoad: function () {
         var that = this;
@@ -30,6 +31,10 @@ Page({
                         duration: 5000
                     })
                     return;
+                } else {
+                    that.setData({
+                        showFloder: true
+                    });
                 }
                 var windowHeight = app.globalData.deviceInfo.windowHeight;
                 var windowWidth = app.globalData.deviceInfo.windowWidth;
@@ -81,6 +86,7 @@ Page({
                         var longitude = res.longitude;//经度，浮点数，范围为-180~180，负数表示西经
                         location = latitude + ":" + longitude;
                         wx.setStorageSync('location', location);
+                        that.getWeather(location);//获取天气
                     },
                     fail: function (err) {
                         console.log(err);
@@ -89,11 +95,15 @@ Page({
                         })
                     }
                 })
+            } else {
+                that.getWeather(location);//获取天气
             }
-            that.getWeather(location);//获取天气
         }
     },
     onShow: function () {
+        this.setData({
+            showFloder: false
+        });
         this.onLoad();
     },
     onPullDownRefresh: function () {
@@ -116,7 +126,8 @@ Page({
                 var result = res.data
                 if (result.status == 'success') {
                     that.setData({
-                        folderList: res.data.dataList
+                        folderList: res.data.dataList,
+                        showFloder: true
                     });
                     var windowHeight = app.globalData.deviceInfo.windowHeight;
                     var windowWidth = app.globalData.deviceInfo.windowWidth;

@@ -11,11 +11,14 @@
     </view>
   </view>
 
+  <view wx:if="{{showFloder}}">
   <scroll-view class='msg-list' style="height: {{height}}px;" scroll-y='true'>
-    <view class='inline-view' wx:for="{{folderList}}" wx:for-index="index" wx:for-item="item" wx:key="id" >
-      <image id="{{item.id}}" bindtap='getNoteList' wx:if ="{{item.name == '日计划' || item.name == '周计划' || item.name == '月计划' || item.name == '年计划'}}" style="width:{{imgWidth}}px;height:{{imgHeight}}px;" mode="aspectFit" src="../../image/note-{{item.id}}.png"></image>
-      <image id="{{item.id}}" bindtap='getNoteList' wx:else bindtap='getNoteList' style="width:{{imgWidth}}px;height:{{imgHeight}}px;" mode="aspectFit" src="../../image/userPlan.png"></image>
-      <view id="{{item.id}}" bindtap='getNoteList' style="text-align: center;margin-top: 0px;padding-top: 0px">{{item.name}}</view>
-    </view>
+      <view class='inline-view' wx:for="{{folderList}}" wx:for-index="index" wx:for-item="item" wx:key="id" >
+        <image id="{{item.id}}" bindtap='getNoteList' wx:if ="{{item.name == '日计划' || item.name == '周计划' || item.name == '月计划' || item.name == '年计划'}}" style="width:{{imgWidth}}px;height:{{imgHeight}}px;" mode="aspectFit" src="../../image/note-{{item.id}}.png"></image>
+        <image id="{{item.id}}" bindtap='getNoteList' wx:else bindtap='getNoteList' style="width:{{imgWidth}}px;height:{{imgHeight}}px;" mode="aspectFit" src="../../image/userPlan.png"></image>
+        <view id="{{item.id}}" bindtap='getNoteList' style="text-align: center;margin-top: 0px;padding-top: 0px">{{item.name}}</view>
+      </view>
   </scroll-view>
+  </view>
+  <view wx:else style="text-align: center;margin-top: 50%;">拼命加载中...</view>
 </view>
